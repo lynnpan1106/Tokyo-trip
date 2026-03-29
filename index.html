@@ -1,1 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>東京行 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'morandi-rose': '#bf9d96', 'cocoa-brown': '#6f5643', 'oatmeal': '#f4f1ea' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f1ea; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; color: #555; overflow-x: hidden; }
+        .active-day { background-color: #bf9d96 !important; color: white !important; }
+        .active-tab { border-bottom: 3px solid #bf9d96; color: #6f5643 !important; font-weight: 800; }
+        .glass-nav { background: rgba(244, 241, 234, 0.98); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding-bottom: env(safe-area-inset-bottom); }
+        .checked-text { text-decoration: line-through; opacity: 0.5; }
+        .hidden-section { display: none !important; }
+        .swipe-item { position: relative; overflow: hidden; border-radius: 1.25rem; background: #e5a9a9; margin-bottom: 0.75rem; }
+        .swipe-content { position: relative; z-index: 2; transition: transform 0.3s ease; background: white; cursor: pointer; }
+        .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; color: white; display: flex; align-items: center; justify-content: center; z-index: 1; font-weight: bold; }
+        .swiped .swipe-content { transform: translateX(-80px); }
+    </style>
+</head>
+<body class="pb-48">
 
+    <header class="sticky top-0 z-30 bg-oatmeal/95 backdrop-blur-sm p-5 border-b border-[#e2dfd9] text-center shadow-sm">
+        <h1 id="main-title" class="text-xl font-extrabold text-cocoa-brown tracking-widest">載入中...</h1>
+        <div class="flex items-center justify-center gap-2 mt-2">
+            <p id="sub-title" class="text-xs text-gray-500 font-medium">2026/04/10</p>
+            <span class="text-gray-300">|</span>
+            <div id="weather-box" class="flex items-center gap-1.5 text-xs text-slate-500 font-bold">
+                <i id="weather-icon" class="fas fa-sun text-slate-400"></i>
+                <span id="weather-temp">14°C</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="itinerary-section" class="relative p-6 max-w-md mx-auto min-h-screen">
+        <div id="timeline-content"></div>
+    </main>
+
+    <main id="checklist-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#eee8df]">
+            <h2 class="text-lg font-bold text-cocoa-brown mb-4">行前準備</h2>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="todo-input" placeholder="新增清單..." class="flex-1 px-4 py-2 rounded-xl border border-gray-100 bg-gray-50 text-sm focus:outline-none">
+                <button onclick="handleAddTodo()" class="bg-morandi-rose text-white px-5 py-2 rounded-xl text-sm font-bold">新增</button>
+            </div>
+            <ul id="todo-list" class="space-y-3"></ul>
+        </div>
+    </main>
+
+    <main id="shopping-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#eee8df]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-cocoa-brown">購物清單</h2>
+                <button onclick="handleClearBought()" class="text-[10px] text-morandi-rose border border-morandi-rose px-2 py-1 rounded-lg font-bold">清除已買</button>
+            </div>
+            <div class="space-y-3 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm">
+                <input type="text" id="shop-name" placeholder="商品名稱" class="w-full px-3 py-2 rounded-lg border border-gray-100 focus:outline-none">
+                <div class="flex gap-2 items-center">
+                    <input type="number" id="shop-count" placeholder="數量" class="w-20 px-3 py-2 rounded-lg border border-gray-100 focus:outline-none">
+                    <input type="file" id="shop-file" accept="image/*" class="hidden" onchange="handlePreviewFile()">
+                    <button onclick="document.getElementById('shop-file').click()" class="flex-1 bg-white border border-gray-200 text-gray-400 py-2 rounded-lg text-xs flex items-center justify-center gap-1"><i class="fas fa-camera"></i> <span id="file-status">拍商品圖</span></button>
+                </div>
+                <div id="img-preview-box" class="hidden w-full h-32 rounded-lg overflow-hidden border border-dashed border-gray-300 mt-2"><img id="img-preview" src="" class="w-full h-full object-cover"></div>
+                <button onclick="handleAddShopItem()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg font-bold">新增商品</button>
+            </div>
+            <div id="shop-list"></div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-[#e2dfd9] z-40 shadow-2xl">
+        <div id="date-nav" class="flex justify-around items-center px-4 pt-4 pb-2">
+            <button onclick="renderDay(1)" id="btn-1" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all"><span>D1</span><span>4/10</span></button>
+            <button onclick="renderDay(2)" id="btn-2" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all"><span>D2</span><span>4/11</span></button>
+            <button onclick="renderDay(3)" id="btn-3" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all"><span>D3</span><span>4/12</span></button>
+            <button onclick="renderDay(4)" id="btn-4" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all"><span>D4</span><span>4/13</span></button>
+            <button onclick="renderDay(5)" id="btn-5" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all"><span>D5</span><span>4/14</span></button>
+        </div>
+        <div class="flex justify-around items-center py-2 px-2 border-t border-gray-200/50 mt-2">
+            <button onclick="switchTab('itinerary')" id="nav-itinerary" class="flex-1 py-2 text-[13px] font-bold text-gray-400">行程</button>
+            <button onclick="switchTab('checklist')" id="nav-checklist" class="flex-1 py-2 text-[13px] font-bold text-gray-400">行前準備</button>
+            <button onclick="switchTab('shopping')" id="nav-shopping" class="flex-1 py-2 text-[13px] font-bold text-gray-400">購物清單</button>
+        </div>
+    </nav>
+
+    <script>
+        const itinerary = {
+            1: { title: "Day 1：啟程與新宿", date: "2026/04/10 (五)", events: [
+                [span_0](start_span){ time: "08:30", icon: "plane", title: "星宇 JX800 出發", desc: "桃園 08:30 → 12:55 抵達成田[span_0](end_span)" },
+                [span_1](start_span){ time: "13:44", icon: "train", title: "搭乘 N'EX", desc: "買來回票 5,200円。B1 JR取櫻花鑰匙圈[span_1](end_span)" },
+                [span_2](start_span){ time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "tokyo sky dream shinjuku[span_2](end_span)" },
+                [span_3](start_span){ time: "18:30", icon: "tree", title: "上野公園 夜櫻", desc: "點燈至 23:00[span_3](end_span)" }
+            ]},
+            2: { title: "Day 2：河口湖探險", date: "2026/04/11 (六)", events: [
+                [span_4](start_span){ time: "08:30", icon: "train", title: "富士回遊 08:30", desc: "新宿 → 富士山站[span_4](end_span)" },
+                [span_5](start_span){ time: "13:00", icon: "car", title: "租車自駕", desc: "TOYOTA 租車公司[span_5](end_span)" },
+                [span_6](start_span){ time: "14:30", icon: "camera", title: "忍野八海", desc: "富士雪水湧泉[span_6](end_span)" }
+            ]},
+            3: { title: "Day 3：逆富士與花海", date: "2026/04/12 (日)", events: [
+                [span_7](start_span){ time: "06:00", icon: "camera", title: "逆富士攝影", desc: "日出後30分鐘最佳[span_7](end_span)" },
+                [span_8](start_span){ time: "10:00", icon: "tree", title: "富士芝櫻祭", desc: "門票 900円[span_8](end_span)" },
+                [span_9](start_span){ time: "13:00", icon: "camera", title: "大石公園", desc: "花海富士山[span_9](end_span)" }
+            ]},
+            4: { title: "Day 4：天上山與池袋", date: "2026/04/13 (一)", events: [
+                [span_10](start_span){ time: "09:30", icon: "mountain", title: "天上山纜車", desc: "兔子神社[span_10](end_span)" },
+                [span_11](start_span){ time: "16:08", icon: "train", title: "抵達池袋", desc: "Check-in 池袋飯店[span_11](end_span)" },
+                [span_12](start_span){ time: "18:00", icon: "shopping-bag", title: "池袋購物", desc: "太陽城、唐吉訶德[span_12](end_span)" }
+            ]},
+            5: { title: "Day 5：淺草與返台", date: "2026/04/14 (二)", events: [
+                [span_13](start_span){ time: "09:00", icon: "torii-gate", title: "淺草寺參拜", desc: "仲見世街買伴手禮[span_13](end_span)" },
+                [span_14](start_span){ time: "10:30", icon: "utensils", title: "晴空塔敘敘苑", desc: "30F 絕景燒肉[span_14](end_span)" },
+                [span_15](start_span){ time: "16:20", icon: "plane", title: "返台航班", desc: "N'EX 前往機場[span_15](end_span)" }
+            ]}
+        };
+
+        let currentTab = 'itinerary';
+        let currentDay = 1;
+        let todos = JSON.parse(localStorage.getItem('travel_todos')) || [{ text: "護照", done: false }];
+        let shopItems = JSON.parse(localStorage.getItem('travel_shop')) || [];
+        let base64Img = "";
+        let startX = 0;
+        let activeSwipeItem = null;
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('main').forEach(m => m.classList.add('hidden-section'));
+            document.querySelectorAll('nav button[id^="nav-"]').forEach(b => b.classList.remove('active-tab', 'text-morandi-rose'));
+            
+            document.getElementById(`${tab}-section`).classList.remove('hidden-section');
+            document.getElementById(`nav-${tab}`).classList.add('active-tab');
+            
+            document.getElementById('date-nav').style.display = (tab === 'itinerary') ? 'flex' : 'none';
+            if (tab === 'itinerary') renderDay(currentDay);
+            else if (tab === 'checklist') { document.getElementById('main-title').innerText = "行前準備"; renderTodos(); }
+            else if (tab === 'shopping') { document.getElementById('main-title').innerText = "購物清單"; renderShopItems(); }
+        }
+
+        function renderDay(day) {
+            currentDay = day;
+            const data = itinerary[day];
+            document.getElementById('main-title').innerText = data.title;
+            document.getElementById('sub-title').innerText = data.date;
+            document.querySelectorAll('#date-nav button').forEach(b => b.classList.remove('active-day'));
+            document.getElementById(`btn-${day}`).classList.add('active-day');
+            
+            document.getElementById('timeline-content').innerHTML = data.events.map(ev => `
+                <div class="relative mb-8 pl-12"><div class="absolute left-[16px] top-1 w-6 h-6 bg-white border-4 border-morandi-rose rounded-full z-10"></div><div class="bg-white p-5 rounded-3xl shadow-sm border border-[#eee8df]"><span class="text-xs font-bold text-cocoa-brown/80">${ev.time}</span><h3 class="text-lg font-bold text-cocoa-brown">${ev.title}</h3><p class="text-sm text-gray-500 mt-1">${ev.desc}</p></div></div>
+            `).join('');
+        }
+
+        function initSwipe() {
+            document.querySelectorAll('.swipe-item').forEach(el => {
+                el.ontouchstart = e => { startX = e.touches[0].clientX; if (activeSwipeItem && activeSwipeItem !== el) activeSwipeItem.classList.remove('swiped'); };
+                el.ontouchend = e => { let diff = startX - e.changedTouches[0].clientX; if (diff > 50) { el.classList.add('swiped'); activeSwipeItem = el; } else if (diff < -50) { el.classList.remove('swiped'); } };
+            });
+        }
+
+        function renderTodos() {
+            document.getElementById('todo-list').innerHTML = todos.map((t, i) => `<li class="swipe-item"><div class="swipe-delete-btn" onclick="deleteTodo(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleTodo(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${t.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200'}"><i class="fas fa-check text-[10px]"></i></div><span class="${t.done ? 'checked-text' : ''}">${t.text}</span></div></li>`).join('');
+            initSwipe();
+            localStorage.setItem('travel_todos', JSON.stringify(todos));
+        }
+
+        function renderShopItems() {
+            document.getElementById('shop-list').innerHTML = shopItems.map((s, i) => `<div class="swipe-item"><div class="swipe-delete-btn" onclick="deleteShop(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleShop(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${s.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200'}"><i class="fas fa-check text-[10px]"></i></div>${s.img ? `<img src="${s.img}" class="w-12 h-12 rounded-lg object-cover">` : `<div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-[10px]">無圖</div>`}<div class="flex-1 font-bold text-sm ${s.done ? 'checked-text' : ''}">${s.name} (x${s.count})</div></div></div>`).join('');
+            initSwipe();
+            localStorage.setItem('travel_shop', JSON.stringify(shopItems));
+        }
+
+        window.toggleTodo = i => { todos[i].done = !todos[i].done; renderTodos(); };
+        window.deleteTodo = i => { todos.splice(i, 1); renderTodos(); };
+        window.handleAddTodo = () => { const inp = document.getElementById('todo-input'); if(inp.value) { todos.push({text: inp.value, done: false}); inp.value=''; renderTodos(); } };
+        window.toggleShop = i => { shopItems[i].done = !shopItems[i].done; renderShopItems(); };
+        window.deleteShop = i => { shopItems.splice(i, 1); renderShopItems(); };
+        window.handleClearBought = () => { if(confirm("清除已買？")) { shopItems = shopItems.filter(s => !s.done); renderShopItems(); } };
+        window.handlePreviewFile = () => {
+            const file = document.getElementById('shop-file').files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = new Image(); img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    canvas.width = 300; canvas.height = img.height * (300/img.width);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    base64Img = canvas.toDataURL('image/jpeg', 0.6);
+                    document.getElementById('img-preview').src = base64Img;
+                    document.getElementById('img-preview-box').classList.remove('hidden');
+                    document.getElementById('file-status').innerText = "已選圖";
+                };
+            };
+            if(file) reader.readAsDataURL(file);
+        };
+        window.handleAddShopItem = () => {
+            const name = document.getElementById('shop-name').value;
+            const count = document.getElementById('shop-count').value || 1;
+            if(!name) return;
+            shopItems.push({ name, count, img: base64Img, done: false });
+            document.getElementById('shop-name').value = ''; document.getElementById('file-status').innerText = "拍商品圖";
+            document.getElementById('img-preview-box').classList.add('hidden');
+            base64Img = ""; renderShopItems();
+        };
+
+        window.onload = () => { switchTab('itinerary'); };
+    </script>
+</body>
+</html>
