@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>東京河口湖櫻花季 2026</title>
+    <title>東京旅遊 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
     <script>
@@ -25,7 +25,7 @@
         .active-tab { border-bottom: 3px solid #bf9d96; color: #6f5643 !important; font-weight: 800; }
         .glass-nav { background: rgba(244, 241, 234, 0.98); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding-bottom: env(safe-area-inset-bottom); }
         .checked-text { text-decoration: line-through; opacity: 0.5; }
-        .hidden-section { display: none; }
+        .hidden-section { display: none !important; }
         .swipe-item { position: relative; overflow: hidden; transition: transform 0.3s ease; border-radius: 1.25rem; background: #e5a9a9; }
         .swipe-content { position: relative; z-index: 2; transition: transform 0.3s ease; background: white; cursor: pointer; }
         .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; color: white; display: flex; align-items: center; justify-content: center; z-index: 1; font-size: 0.85rem; font-weight: bold; }
@@ -54,7 +54,7 @@
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#eee8df]">
             <h2 class="text-lg font-bold text-cocoa-brown mb-4">行前準備</h2>
             <div class="flex gap-2 mb-6">
-                <input type="text" id="todo-input" placeholder="新增清單項目" class="flex-1 px-4 py-2 rounded-xl border border-gray-100 bg-gray-50 text-sm focus:outline-none">
+                <input type="text" id="todo-input" placeholder="新增清單..." class="flex-1 px-4 py-2 rounded-xl border border-gray-100 bg-gray-50 text-sm focus:outline-none">
                 <button onclick="addTodo()" class="bg-morandi-rose text-white px-5 py-2 rounded-xl text-sm font-bold">新增</button>
             </div>
             <ul id="todo-list" class="space-y-3"></ul>
@@ -75,7 +75,7 @@
                     <button onclick="document.getElementById('shop-file').click()" class="flex-1 bg-white border border-gray-200 text-gray-400 py-2 rounded-lg text-xs flex items-center justify-center gap-1"><i class="fas fa-camera"></i> <span id="file-status">拍商品圖</span></button>
                 </div>
                 <div id="img-preview-box" class="hidden w-full h-32 rounded-lg overflow-hidden border border-dashed border-gray-300 mt-2"><img id="img-preview" src="" class="w-full h-full object-cover"></div>
-                <button onclick="addShopItem()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg font-bold active:scale-95 transition-transform">新增</button>
+                <button onclick="addShopItem()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg font-bold">新增</button>
             </div>
             <div id="shop-list" class="space-y-4"></div>
         </div>
@@ -97,85 +97,132 @@
     </nav>
 
     <script>
-        // --- 行程資料 (根據 PDF 整理) ---
         const itinerary = {
-            1: {
-                title: "Day 1：啟程與新宿",
-                date: "2026/04/10 (五)",
-                events: [
-                    [span_0](start_span){ time: "08:30", icon: "plane", title: "星宇 JX800 出發", desc: "桃園 TPE 08:30 → 12:55 抵達成田 NRT[span_0](end_span)", map: "" },
-                    [span_1](start_span){ time: "13:44", icon: "train", title: "搭乘 N'EX", desc: "買來回票 5,200円。B1 JR取櫻花鑰匙圈[span_1](end_span)", map: "https://www.google.com/maps/search/Narita+Airport+Terminal+2+JR+East+Travel+Service+Center" },
-                    [span_2](start_span){ time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "Tokyo Sky Dream Shinjuku (新宿東口)[span_2](end_span)", map: "https://www.google.com/maps/search/tokyo+sky+dream+shinjuku" },
-                    [span_3](start_span){ time: "17:00", icon: "torii-gate", title: "新宿花園神社", desc: "步行約 7 分鐘[span_3](end_span)", map: "https://www.google.com/maps/search/Hanazono+Shrine" },
-                    [span_4](start_span){ time: "18:30", icon: "tree", title: "上野公園 夜櫻", desc: "點燈時間 17:00~23:00[span_4](end_span)", map: "https://www.google.com/maps/search/Ueno+Park" },
-                    [span_5](start_span){ time: "21:00", icon: "utensils", title: "新宿晚餐", desc: "一蘭、神座拉麵或歌舞伎町一番街[span_5](end_span)", map: "https://www.google.com/maps/search/Ichiran+Shinjuku+Kabukicho" }
-                ]
-            },
-            2: {
-                title: "Day 2：河口湖探險",
-                date: "2026/04/11 (六)",
-                events: [
-                    [span_6](start_span){ time: "08:30", icon: "train", title: "富士回遊 08:30", desc: "新宿車站出發 → 10:21 富士山站[span_6](end_span)", map: "" },
-                    [span_7](start_span){ time: "11:30", icon: "utensils", title: "河口湖美食", desc: "不動茶屋、造型吐司[span_7](end_span)", map: "https://www.google.com/maps/search/Houtou+Fudou+Kawaguchiko" },
-                    [span_8](start_span){ time: "13:00", icon: "car", title: "TOYOTA 租車", desc: "河口湖車站步行 7 分鐘[span_8](end_span)", map: "https://www.google.com/maps/search/TOYOTA+Rent+a+Car+Kawaguchiko" },
-                    [span_9](start_span){ time: "14:30", icon: "camera", title: "忍野八海", desc: "清澈富士雪水湧泉[span_9](end_span)", map: "https://www.google.com/maps/search/Oshino+Hakkai" },
-                    [span_10](start_span){ time: "17:00", icon: "shopping-cart", title: "MaxValu 超市", desc: "24小時營業，回飯店補貨[span_10](end_span)", map: "https://www.google.com/maps/search/MaxValu+Kawaguchiko" }
-                ]
-            },
-            3: {
-                title: "Day 3：逆富士與花海",
-                date: "2026/04/12 (日)",
-                events: [
-                    [span_11](start_span){ time: "06:00", icon: "camera", title: "逆富士攝影", desc: "河口湖大橋最佳攝影點[span_11](end_span)", map: "https://www.google.com/maps/search/Lake+Kawaguchi+Bridge+Fuji+Reflection" },
-                    [span_12](start_span){ time: "07:00", icon: "torii-gate", title: "新倉富士淺間神社", desc: "五重塔+富士山絕景[span_12](end_span)", map: "https://www.google.com/maps/search/Arakurayama+Sengen+Park" },
-                    [span_13](start_span){ time: "10:00", icon: "tree", title: "富士芝櫻祭", desc: "已預約 900円 門票[span_13](end_span)", map: "https://www.google.com/maps/search/Fuji+Shibazakura+Festival" },
-                    [span_14](start_span){ time: "13:00", icon: "camera", title: "大石公園", desc: "白天花海版富士山[span_14](end_span)", map: "https://www.google.com/maps/search/Oishi+Park" },
-                    [span_15](start_span){ time: "20:00", icon: "car", title: "河口湖還車", desc: "TOYOTA 還車並回池袋飯店[span_15](end_span)", map: "" }
-                ]
-            },
-            4: {
-                title: "Day 4：池袋與淺草",
-                date: "2026/04/13 (一)",
-                events: [
-                    [span_16](start_span){ time: "10:30", icon: "mountain", title: "天上山纜車", desc: "兔子神社與絕景[span_16](end_span)", map: "https://www.google.com/maps/search/Mt.+Fuji+Panoramic+Ropeway" },
-                    [span_17](start_span){ time: "16:08", icon: "train", title: "抵達池袋", desc: "Check-in 池袋常磐10號大廈[span_17](end_span)", map: "https://www.google.com/maps/search/Ikebukuro+Station" },
-                    [span_18](start_span){ time: "18:00", icon: "shopping-bag", title: "池袋百貨/太陽城", desc: "扭蛋百貨、UNIQLO、東武百貨[span_18](end_span)", map: "https://www.google.com/maps/search/Sunshine+City+Ikebukuro" },
-                    [span_19](start_span){ time: "21:30", icon: "shopping-cart", title: "驚安殿堂", desc: "唐吉訶德池袋東口店[span_19](end_span)", map: "https://www.google.com/maps/search/Don+Quijote+Ikebukuro+East+Exit" }
-                ]
-            },
-            5: {
-                title: "Day 5：晴空塔與返台",
-                date: "2026/04/14 (二)",
-                events: [
-                    [span_20](start_span){ time: "09:00", icon: "torii-gate", title: "淺草寺/雷門", desc: "招財貓神社、仲見世街[span_20](end_span)", map: "https://www.google.com/maps/search/Senso-ji" },
-                    [span_21](start_span){ time: "10:30", icon: "utensils", title: "晴空塔敘敘苑", desc: "30F 絕景燒肉 (需預約)[span_21](end_span)", map: "https://www.google.com/maps/search/Jojoen+Tokyo+Skytree" },
-                    [span_22](start_span){ time: "14:00", icon: "shopping-bag", title: "東京車站一番街", desc: "焦糖布丁塔、伴手禮採買[span_22](end_span)", map: "https://www.google.com/maps/search/Tokyo+Character+Street" },
-                    [span_23](start_span){ time: "16:20", icon: "plane", title: "返台航班", desc: "N'EX 新宿站出發[span_23](end_span)", map: "" }
-                ]
-            }
+            1: { title: "Day 1：啟程與新宿", date: "2026/04/10 (五)", events: [
+                [span_0](start_span){ time: "08:30", icon: "plane", title: "星宇 JX800 出發", desc: "桃園 08:30 → 12:55 抵達成田[span_0](end_span)" },
+                [span_1](start_span){ time: "13:44", icon: "train", title: "搭乘 N'EX", desc: "買來回票 5,200円[span_1](end_span)" },
+                [span_2](start_span){ time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "tokyo sky dream shinjuku[span_2](end_span)" },
+                [span_3](start_span){ time: "17:00", icon: "torii-gate", title: "新宿花園神社", desc: "新宿三丁目站E2出口[span_3](end_span)" },
+                [span_4](start_span){ time: "18:00", icon: "shopping-bag", title: "新宿逛街", desc: "扭蛋森林、LUMINE[span_4](end_span)" }
+            ]},
+            2: { title: "Day 2：河口湖探險", date: "2026/04/11 (六)", events: [
+                [span_5](start_span){ time: "08:30", icon: "train", title: "富士回遊 08:30", desc: "新宿車站 → 10:21 富士山站[span_5](end_span)" },
+                [span_6](start_span){ time: "13:00", icon: "car", title: "河口湖租車", desc: "TOYOTA 租車公司[span_6](end_span)" },
+                [span_7](start_span){ time: "14:30", icon: "camera", title: "忍野八海", desc: "富士山雪水湧泉[span_7](end_span)" },
+                [span_8](start_span){ time: "15:50", icon: "torii-gate", title: "北口本宮富士淺間神社", desc: "千年森林神社[span_8](end_span)" }
+            ]},
+            3: { title: "Day 3：逆富士與花海", date: "2026/04/12 (日)", events: [
+                [span_9](start_span){ time: "06:00", icon: "camera", title: "河口湖大橋逆富士", desc: "日出後30分鐘最佳[span_9](end_span)" },
+                [span_10](start_span){ time: "07:00", icon: "torii-gate", title: "新倉富士淺間神社", desc: "五重塔+富士山[span_10](end_span)" },
+                [span_11](start_span){ time: "10:00", icon: "tree", title: "富士芝櫻祭", desc: "門票900元[span_11](end_span)" },
+                [span_12](start_span){ time: "13:00", icon: "camera", title: "大石公園", desc: "白天花海版富士山[span_12](end_span)" }
+            ]},
+            4: { title: "Day 4：天上山與池袋", date: "2026/04/13 (一)", events: [
+                [span_13](start_span){ time: "09:30", icon: "mountain", title: "天上山公園纜車", desc: "兔子神社[span_13](end_span)" },
+                [span_14](start_span){ time: "14:08", icon: "train", title: "搭車回新宿", desc: "14:08 出發-16:08 新宿[span_14](end_span)" },
+                [span_15](start_span){ time: "18:00", icon: "shopping-bag", title: "池袋逛街", desc: "太陽城、LUMINE[span_15](end_span)" }
+            ]},
+            5: { title: "Day 5：淺草與返台", date: "2026/04/14 (二)", events: [
+                [span_16](start_span){ time: "09:00", icon: "torii-gate", title: "淺草寺/雷門", desc: "仲見世商店街[span_16](end_span)" },
+                [span_17](start_span){ time: "10:30", icon: "utensils", title: "晴空塔敘敘苑", desc: "30F 絕景燒肉[span_17](end_span)" },
+                [span_18](start_span){ time: "14:00", icon: "shopping-bag", title: "東京車站", desc: "地下街採買伴手禮[span_18](end_span)" },
+                [span_19](start_span){ time: "16:20", icon: "plane", title: "返台起飛", desc: "N'EX 12:08-13:23[span_19](end_span)" }
+            ]}
         };
 
-        // --- 核心邏輯 (維持原樣) ---
-        async function fetchWeather() { try { const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6895&longitude=139.6917&current_weather=true'); const data = await res.json(); document.getElementById('weather-temp').innerText = `東京 ${Math.round(data.current_weather.temperature)}°C`; } catch (e) { document.getElementById('weather-temp').innerText = '東京 14°C'; } }
-        let base64Img = "";
-        function previewFile() { const file = document.getElementById('shop-file').files[0]; const reader = new FileReader(); reader.onloadend = function() { const img = new Image(); img.src = reader.result; img.onload = function() { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const maxW = 300; const scale = maxW / img.width; canvas.width = maxW; canvas.height = img.height * scale; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); base64Img = canvas.toDataURL('image/jpeg', 0.6); document.getElementById('img-preview').src = base64Img; document.getElementById('img-preview-box').classList.remove('hidden'); document.getElementById('file-status').innerText = "已拍好"; } }; if (file) reader.readAsDataURL(file); }
-        function switchTab(tab) { document.querySelectorAll('main').forEach(s => s.classList.add('hidden-section')); document.querySelectorAll('nav .flex-1').forEach(n => { n.classList.remove('active-tab', 'text-morandi-rose'); n.classList.add('text-gray-400'); }); document.getElementById(`${tab}-section`).classList.remove('hidden-section'); document.getElementById(`nav-${tab}`).classList.add('active-tab', 'text-morandi-rose'); document.getElementById('date-nav').style.display = (tab === 'itinerary') ? 'flex' : 'none'; if(tab === 'itinerary') renderDay(1); else if(tab === 'checklist') renderTodos(); else if(tab === 'shopping') renderShopItems(); }
-        function renderDay(dayNum) { const data = itinerary[dayNum]; document.getElementById('main-title').innerText = data.title; document.getElementById('sub-title').innerText = data.date; document.querySelectorAll('#date-nav button').forEach(btn => { btn.classList.remove('active-day'); btn.classList.add('text-gray-400'); }); document.getElementById(`btn-${dayNum}`).classList.add('active-day'); document.getElementById('timeline-content').innerHTML = data.events.map(ev => `<div class="relative mb-8 pl-12"><div class="absolute left-[16px] top-1 w-6 h-6 bg-white border-4 border-morandi-rose rounded-full z-10"></div><div class="bg-white p-5 rounded-3xl shadow-sm border border-[#eee8df]"><div class="flex justify-between items-center"><span class="text-xs font-bold text-cocoa-brown/80">${ev.time}</span><i class="fas fa-${ev.icon} text-gray-200"></i></div><h3 class="text-lg font-bold text-cocoa-brown">${ev.title}</h3><p class="text-sm text-gray-500 mt-1">${ev.desc}</p>${ev.map ? `<a href="${ev.map}" target="_blank" class="inline-block mt-3 px-3 py-1 bg-oatmeal text-morandi-rose rounded-full text-[10px] font-bold border border-morandi-rose">導航 <i class="fas fa-chevron-right ml-1"></i></a>` : ''}</div></div>`).join(''); }
-        let startX = 0; let activeSwipeItem = null;
-        function attachListeners() { document.querySelectorAll('.swipe-item').forEach(item => { item.ontouchstart = e => { startX = e.touches[0].clientX; if (activeSwipeItem && activeSwipeItem !== item) activeSwipeItem.classList.remove('swiped'); }; item.ontouchend = e => { let endX = e.changedTouches[0].clientX; if (startX - endX > 50) { item.classList.add('swiped'); activeSwipeItem = item; } else if (endX - startX > 50) { item.classList.remove('swiped'); } }; }); }
-        let todos = JSON.parse(localStorage.getItem('travel_todos')) || [{ text: "護照/簽證", done: false }, { text: "日幣現金/網卡", done: false }];
-        function renderTodos() { document.getElementById('todo-list').innerHTML = todos.map((t, i) => `<li class="swipe-item mb-3"><div class="swipe-delete-btn" onclick="deleteTodo(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleTodo(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${t.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200 text-transparent'}"><i class="fas fa-check text-[10px]"></i></div><span class="text-sm font-medium ${t.done ? 'checked-text' : ''}">${t.text}</span></div></li>`).join(''); attachListeners(); localStorage.setItem('travel_todos', JSON.stringify(todos)); }
-        function addTodo() { const input = document.getElementById('todo-input'); if(input.value) { todos.push({text: input.value, done: false}); input.value=''; renderTodos(); } }
-        function toggleTodo(i) { todos[i].done = !todos[i].done; renderTodos(); }
-        function deleteTodo(i) { todos.splice(i, 1); renderTodos(); }
+        let currentDay = 1;
+        let todos = JSON.parse(localStorage.getItem('travel_todos')) || [{ text: "護照", done: false }, { text: "日幣", done: false }];
         let shopItems = JSON.parse(localStorage.getItem('travel_shop')) || [];
-        function renderShopItems() { document.getElementById('shop-list').innerHTML = shopItems.map((s, i) => `<div class="swipe-item mb-4"><div class="swipe-delete-btn" onclick="deleteShop(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleShop(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${s.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200 text-transparent'}"><i class="fas fa-check text-[10px]"></i></div>${s.img ? `<img src="${s.img}" class="w-14 h-14 rounded-xl object-cover">` : `<div class="w-14 h-14 rounded-xl bg-gray-200 flex items-center justify-center text-[10px] text-gray-400">無圖</div>`}<div class="flex-1"><h4 class="font-bold text-sm ${s.done ? 'checked-text' : ''}">${s.name}</h4><p class="text-[10px] text-gray-400 font-bold">數量：${s.count}</p></div></div></div>`).join(''); attachListeners(); localStorage.setItem('travel_shop', JSON.stringify(shopItems)); }
-        function addShopItem() { const name = document.getElementById('shop-name').value; const count = document.getElementById('shop-count').value || 1; if(!name) return; shopItems.push({ name, count, img: base64Img, done: false }); document.getElementById('shop-name').value = ''; document.getElementById('shop-count').value = ''; document.getElementById('shop-file').value = ''; document.getElementById('img-preview-box').classList.add('hidden'); document.getElementById('file-status').innerText = "拍商品圖"; base64Img = ""; renderShopItems(); }
-        function toggleShop(i) { shopItems[i].done = !shopItems[i].done; renderShopItems(); }
-        function deleteShop(i) { shopItems.splice(i, 1); renderShopItems(); }
-        function clearBoughtItems() { if(confirm("清除已購買項目嗎？")) { shopItems = shopItems.filter(s => !s.done); renderShopItems(); } }
+        let base64Img = "";
+        let startX = 0;
+        let activeSwipeItem = null;
 
-        window.onload = () => { renderDay(1); fetchWeather(); };
+        function fetchWeather() {
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6895&longitude=139.6917&current_weather=true')
+                .then(r => r.json())
+                .then(d => { document.getElementById('weather-temp').innerText = `東京 ${Math.round(d.current_weather.temperature)}°C`; })
+                .catch(() => { document.getElementById('weather-temp').innerText = '東京 14°C'; });
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('main').forEach(s => s.classList.add('hidden-section'));
+            document.querySelectorAll('nav .flex-1').forEach(n => { n.classList.remove('active-tab', 'text-morandi-rose'); n.classList.add('text-gray-400'); });
+            document.getElementById(`${tab}-section`).classList.remove('hidden-section');
+            document.getElementById(`nav-${tab}`).classList.add('active-tab', 'text-morandi-rose');
+            document.getElementById('date-nav').style.display = (tab === 'itinerary') ? 'flex' : 'none';
+            if (tab === 'itinerary') renderDay(currentDay);
+            else if (tab === 'checklist') { document.getElementById('main-title').innerText = "行前準備"; renderTodos(); }
+            else if (tab === 'shopping') { document.getElementById('main-title').innerText = "購物清單"; renderShopItems(); }
+        }
+
+        function renderDay(dayNum) {
+            currentDay = dayNum;
+            const data = itinerary[dayNum];
+            document.getElementById('main-title').innerText = data.title;
+            document.getElementById('sub-title').innerText = data.date;
+            document.querySelectorAll('#date-nav button').forEach(btn => { btn.classList.remove('active-day'); btn.classList.add('text-gray-400'); });
+            document.getElementById(`btn-${dayNum}`).classList.add('active-day');
+            document.getElementById('timeline-content').innerHTML = data.events.map(ev => `
+                <div class="relative mb-8 pl-12"><div class="absolute left-[16px] top-1 w-6 h-6 bg-white border-4 border-morandi-rose rounded-full z-10"></div><div class="bg-white p-5 rounded-3xl shadow-sm border border-[#eee8df]"><span class="text-xs font-bold text-cocoa-brown/80">${ev.time}</span><h3 class="text-lg font-bold text-cocoa-brown">${ev.title}</h3><p class="text-sm text-gray-500 mt-1">${ev.desc}</p></div></div>
+            `).join('');
+        }
+
+        function attachListeners() {
+            document.querySelectorAll('.swipe-item').forEach(item => {
+                item.addEventListener('touchstart', e => { startX = e.touches[0].clientX; if (activeSwipeItem && activeSwipeItem !== item) activeSwipeItem.classList.remove('swiped'); });
+                item.addEventListener('touchend', e => { let endX = e.changedTouches[0].clientX; if (startX - endX > 50) { item.classList.add('swiped'); activeSwipeItem = item; } else if (endX - startX > 50) { item.classList.remove('swiped'); } });
+            });
+        }
+
+        function renderTodos() {
+            document.getElementById('todo-list').innerHTML = todos.map((t, i) => `<li class="swipe-item mb-3"><div class="swipe-delete-btn" onclick="deleteTodo(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleTodo(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${t.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200 text-transparent'}"><i class="fas fa-check text-[10px]"></i></div><span class="text-sm font-medium ${t.done ? 'checked-text' : ''}">${t.text}</span></div></li>`).join('');
+            attachListeners();
+            localStorage.setItem('travel_todos', JSON.stringify(todos));
+        }
+
+        function renderShopItems() {
+            document.getElementById('shop-list').innerHTML = shopItems.map((s, i) => `<div class="swipe-item mb-4"><div class="swipe-delete-btn" onclick="deleteShop(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleShop(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${s.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200 text-transparent'}"><i class="fas fa-check text-[10px]"></i></div>${s.img ? `<img src="${s.img}" class="w-14 h-14 rounded-xl object-cover">` : `<div class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center text-[10px] text-gray-400">無圖</div>`}<div class="flex-1"><h4 class="font-bold text-sm ${s.done ? 'checked-text' : ''}">${s.name}</h4><p class="text-[10px] text-gray-400 font-bold">數量：${s.count}</p></div></div></div>`).join('');
+            attachListeners();
+            localStorage.setItem('travel_shop', JSON.stringify(shopItems));
+        }
+
+        window.addTodo = () => { const input = document.getElementById('todo-input'); if (input.value) { todos.push({ text: input.value, done: false }); input.value = ''; renderTodos(); } };
+        window.toggleTodo = (i) => { todos[i].done = !todos[i].done; renderTodos(); };
+        window.deleteTodo = (i) => { todos.splice(i, 1); renderTodos(); };
+        window.toggleShop = (i) => { shopItems[i].done = !shopItems[i].done; renderShopItems(); };
+        window.deleteShop = (i) => { shopItems.splice(i, 1); renderShopItems(); };
+        window.clearBoughtItems = () => { if (confirm("清除已購買項目嗎？")) { shopItems = shopItems.filter(s => !s.done); renderShopItems(); } };
+
+        window.previewFile = () => {
+            const file = document.getElementById('shop-file').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const img = new Image(); img.src = reader.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    const maxW = 300; const scale = maxW / img.width;
+                    canvas.width = maxW; canvas.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    base64Img = canvas.toDataURL('image/jpeg', 0.6);
+                    document.getElementById('img-preview').src = base64Img;
+                    document.getElementById('img-preview-box').classList.remove('hidden');
+                    document.getElementById('file-status').innerText = "已選圖";
+                };
+            };
+            if (file) reader.readAsDataURL(file);
+        };
+
+        window.addShopItem = () => {
+            const name = document.getElementById('shop-name').value;
+            const count = document.getElementById('shop-count').value || 1;
+            if (!name) return;
+            shopItems.push({ name, count, img: base64Img, done: false });
+            document.getElementById('shop-name').value = ''; document.getElementById('shop-count').value = ''; document.getElementById('file-status').innerText = "拍商品圖";
+            document.getElementById('img-preview-box').classList.add('hidden');
+            base64Img = ""; renderShopItems();
+        };
+
+        window.onload = () => { fetchWeather(); switchTab('itinerary'); };
     </script>
 </body>
 </html>
