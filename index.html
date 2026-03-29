@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>東京河口湖櫻花季 2026</title>
+    <title>東京旅遊手冊 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
     <script>
@@ -11,227 +11,188 @@
             theme: {
                 extend: {
                     colors: {
-                        'fuji-blue': '#63ace5', // 富士山藍
-                        'fuji-dark': '#4b8bbe', 
-                        'sakura-pink': '#ffb7c5', // 櫻花粉
-                        'sakura-light': '#fff1f3', // 極淡櫻花背景
-                        'spring-green': '#a8e6cf', // 嫩葉綠 (備用)
+                        'morandi-rose': '#bf9d96',
+                        'cocoa-brown': '#6f5643',
+                        'oatmeal': '#f4f1ea',
+                        'fog-blue': '#9bb7c1',
                     }
                 }
             }
         }
     </script>
     <style>
-        /* 手機版優化與自定義樣式 */
-        body { 
-            background-color: #fff1f3; /* sakura-light */
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            color: #4a4a4a;
-        }
-        
-        /* 時間軸線 - 富士藍 */
-        .timeline-line { 
-            position: absolute; 
-            left: 28px; 
-            top: 0; 
-            bottom: 0; 
-            width: 2px; 
-            background: #add8e6; /* 淡藍色線條 */
-            z-index: 0; 
-        }
-        
-        /* 當前選定日期的樣式 - 櫻花粉 */
-        .active-day { 
-            background-color: #ffb7c5 !important; /* sakura-pink */
-            color: white !important; 
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(255, 183, 197, 0.5);
-        }
-        
-        /* 底部導航毛玻璃效果 */
-        .glass-nav { 
-            background: rgba(255, 255, 255, 0.9); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            padding-bottom: calc(1rem + env(safe-area-inset-bottom)); /* 針對 iPhone X 後續機型優化 */
-        }
-        
-        /* 卡片點擊效果 */
-        .card { 
-            transition: all 0.2s ease-out; 
-            border-left: 4px solid transparent;
-        }
-        .card:active { 
-            transform: scale(0.98); 
-            background-color: #fafafa;
-        }
-        /* 替換原本的 border-pink-50 為富士藍淡色 */
-        .card-border {
-            border-color: #e0f2fe; 
-        }
-        
-        /* 動畫效果 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
+        body { background-color: #f4f1ea; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; color: #555; }
+        .timeline-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: #cbd5e1; z-index: 0; }
+        .active-day { background-color: #bf9d96 !important; color: white !important; transform: scale(1.05); }
+        .glass-nav { background: rgba(244, 241, 234, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding-bottom: env(safe-area-inset-bottom); }
+        .card { transition: all 0.2s ease-out; }
+        .checked { text-decoration: line-through; opacity: 0.5; }
+        .hidden-section { display: none; }
+        input::placeholder { font-size: 0.8rem; opacity: 0.6; }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-40">
 
-    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm p-5 border-b border-sky-100 text-center shadow-sm">
-        <h1 id="day-title" class="text-xl font-bold text-fuji-dark">Day 1：啟程與新宿探索</h1>
-        <p id="day-date" class="text-xs text-gray-400 mt-1.5 flex items-center justify-center gap-2">
-            <i class="fas fa-calendar-alt text-sakura-pink"></i>
-            <span id="date-text">2026/04/10 (五)</span>
-            <span class="text-gray-300">|</span>
-            <i class="fas fa-cloud-sun text-fuji-blue"></i>
-            <span>東京 14°C 晴</span>
-        </p>
+    <header class="sticky top-0 z-30 bg-oatmeal/95 backdrop-blur-sm p-5 border-b border-[#e2dfd9] text-center">
+        <h1 id="main-title" class="text-xl font-extrabold text-cocoa-brown tracking-tight">Day 1：啟程與新宿</h1>
+        <p id="sub-title" class="text-xs text-gray-500 mt-2">2026/04/10 (五) | 東京 14°C 晴</p>
     </header>
 
-    <main class="relative p-6 max-w-md mx-auto">
+    <main id="itinerary-section" class="relative p-6 max-w-md mx-auto min-h-screen">
         <div class="timeline-line"></div>
-        <div id="timeline-content">
-            </div>
+        <div id="timeline-content"></div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-sky-100 px-2 py-4 flex justify-around items-center z-40 shadow-[0_-4px_16px_rgba(0,0,0,0.03)]">
-        
-        <button onclick="renderDay(1)" id="btn-1" class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 text-fuji-blue transition-all active-day">
-            <span class="text-lg font-black tracking-tighter">D1</span>
-            <span class="text-[10px] font-medium opacity-80 mt-0.5">4/10</span>
-        </button>
-        
-        <button onclick="renderDay(2)" id="btn-2" class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 text-fuji-blue transition-all">
-            <span class="text-lg font-black tracking-tighter">D2</span>
-            <span class="text-[10px] font-medium opacity-80 mt-0.5">4/11</span>
-        </button>
-        
-        <button onclick="renderDay(3)" id="btn-3" class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 text-fuji-blue transition-all">
-            <span class="text-lg font-black tracking-tighter">D3</span>
-            <span class="text-[10px] font-medium opacity-80 mt-0.5">4/12</span>
-        </button>
-        
-        <button onclick="renderDay(4)" id="btn-4" class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 text-fuji-blue transition-all">
-            <span class="text-lg font-black tracking-tighter">D4</span>
-            <span class="text-[10px] font-medium opacity-80 mt-0.5">4/13</span>
-        </button>
-        
-        <button onclick="renderDay(5)" id="btn-5" class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-sky-50 text-fuji-blue transition-all">
-            <span class="text-lg font-black tracking-tighter">D5</span>
-            <span class="text-[10px] font-medium opacity-80 mt-0.5">4/14</span>
-        </button>
-        
+    <main id="checklist-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#eee8df]">
+            <h2 class="text-lg font-bold text-cocoa-brown mb-4"><i class="fas fa-passport mr-2"></i>行前準備</h2>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="todo-input" placeholder="例：護照、日幣..." class="flex-1 px-4 py-2 rounded-xl border border-gray-100 bg-gray-50 text-sm">
+                <button onclick="addTodo()" class="bg-morandi-rose text-white px-4 py-2 rounded-xl text-sm font-bold">新增</button>
+            </div>
+            <ul id="todo-list" class="space-y-3"></ul>
+        </div>
+    </main>
+
+    <main id="shopping-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#eee8df]">
+            <h2 class="text-lg font-bold text-cocoa-brown mb-4"><i class="fas fa-shopping-bag mr-2"></i>購物清單</h2>
+            
+            <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <input type="text" id="shop-name" placeholder="商品名稱" class="w-full px-3 py-2 rounded-lg border border-gray-100 text-sm mb-2">
+                <div class="flex gap-2">
+                    <input type="number" id="shop-count" placeholder="數量" class="w-20 px-3 py-2 rounded-lg border border-gray-100 text-sm">
+                    <input type="text" id="shop-img" placeholder="圖片網址 (選填)" class="flex-1 px-3 py-2 rounded-lg border border-gray-100 text-sm">
+                </div>
+                <button onclick="addShopItem()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg text-sm font-bold">新增商品</button>
+            </div>
+
+            <div id="shop-list" class="space-y-4"></div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-[#e2dfd9] px-2 py-3 z-40">
+        <div class="flex justify-around items-center mb-3 px-4">
+            <button onclick="switchTab('itinerary')" id="nav-itinerary" class="text-xs font-bold px-4 py-2 rounded-full active-day"><i class="fas fa-map mr-1"></i>行程</button>
+            <button onclick="switchTab('checklist')" id="nav-checklist" class="text-xs font-bold px-4 py-2 rounded-full text-gray-400"><i class="fas fa-check-square mr-1"></i>準備</button>
+            <button onclick="switchTab('shopping')" id="nav-shopping" class="text-xs font-bold px-4 py-2 rounded-full text-gray-400"><i class="fas fa-cart-plus mr-1"></i>購物</button>
+        </div>
+        <div id="date-nav" class="flex justify-around items-center border-t border-gray-100 pt-3">
+            <button onclick="renderDay(1)" id="btn-1" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/10</button>
+            <button onclick="renderDay(2)" id="btn-2" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/11</button>
+            <button onclick="renderDay(3)" id="btn-3" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/12</button>
+            <button onclick="renderDay(4)" id="btn-4" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/13</button>
+            <button onclick="renderDay(5)" id="btn-5" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/14</button>
+        </div>
     </nav>
 
     <script>
-        // --- 這裡修改妳的行程資料 (範例) ---
-        // 妳可以在這裡補充完整的 Day 3, 4, 5 內容
+        // --- 行程資料 ---
         const itinerary = {
-            1: {
-                title: "Day 1：啟程與新宿探索",
-                date: "2026/04/10 (五)",
-                events: [
-                    { time: "06:30", icon: "car", title: "出發機場", desc: "預計 08:30 航班", map: "" },
-                    { time: "12:55", icon: "plane-arrival", title: "抵達成田 (NRT)", desc: "星宇 JX800", map: "" },
-                    { time: "14:30", icon: "train", title: "搭乘 N'EX", desc: "前往新宿車站", map: "https://goo.gl/maps/bobbytravel" },
-                    { time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "Tokyo Sky Dream Shinjuku", map: "https://goo.gl/maps/tokyoskydream" },
-                    { time: "19:00", icon: "utensils", title: "AFURI 阿夫利拉麵", desc: "柚子鹽拉麵必吃！", map: "https://goo.gl/maps/afurishinjuku" }
-                ]
-            },
-            2: {
-                title: "Day 2：河口湖富士山之旅",
-                date: "2026/04/11 (六)",
-                events: [
-                    { time: "08:00", icon: "bus", title: "富士急行巴士", desc: "新宿 ➔ 河口湖", map: "" },
-                    { time: "10:30", icon: "camera", title: "新倉山淺間公園", desc: "富士山+五重塔絕景", map: "https://goo.gl/maps/arakurayama" },
-                    { time: "13:00", icon: "fish", title: "午餐：餺飥麵", desc: "河口湖特色料理", map: "" },
-                    { time: "15:00", icon: "ship", title: "河口湖遊覽船", desc: "逆富士 挑戰！", map: "" }
-                ]
-            },
-            3: {
-                title: "Day 3：淺草與晴空塔",
-                date: "2026/04/12 (日)",
-                events: [
-                    { time: "10:00", icon: "torii-gate", title: "淺草寺參拜", desc: "雷門大燈籠合照", map: "https://goo.gl/maps/sensoji" },
-                    { time: "14:00", icon: "broadcast-tower", title: "東京晴空塔", desc: "俯瞰東京全景", map: "" }
-                ]
-            },
-            4: {
-                title: "Day 4：上野與阿美橫丁",
-                date: "2026/04/13 (一)",
-                events: [
-                    { time: "10:00", icon: "tree", title: "上野恩賜公園", desc: "漫步賞櫻 (依花況)", map: "" },
-                    { time: "15:00", icon: "shopping-bag", title: "阿美橫丁", desc: "藥妝、零食採買", map: "https://goo.gl/maps/ameyoko" }
-                ]
-            },
-            5: {
-                title: "Day 5：最後採買與返台",
-                date: "2026/04/14 (二)",
-                events: [
-                    { time: "11:00", icon: "shopping-cart", title: "新宿最後採買", desc: "伴手禮補齊", map: "" },
-                    { time: "14:00", icon: "plane-departure", title: "前往機場", desc: "預計 16:20 航班 (JX803)", map: "" }
-                ]
-            }
+            1: { title: "Day 1：啟程與新宿", date: "2026/04/10 (五)", events: [{ time: "08:30", icon: "plane", title: "星宇 JX800", desc: "桃園 ➔ 成田" }, { time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "新宿地區" }] },
+            2: { title: "Day 2：河口湖探險", date: "2026/04/11 (六)", events: [{ time: "09:00", icon: "bus", title: "巴士前往河口湖", desc: "看富士山" }] },
+            3: { title: "Day 3：東京市區", date: "2026/04/12 (日)", events: [{ time: "10:00", icon: "shopping-bag", title: "澀谷/原宿", desc: "" }] },
+            4: { title: "Day 4：上野賞櫻", date: "2026/04/13 (一)", events: [{ time: "11:00", icon: "tree", title: "上野公園", desc: "" }] },
+            5: { title: "Day 5：返程採買", date: "2026/04/14 (二)", events: [{ time: "12:00", icon: "plane-departure", title: "前往機場", desc: "回溫暖的家" }] }
         };
 
-        function renderDay(dayNum) {
-            const data = itinerary[dayNum];
-            if (!data) return; // 如果沒資料不執行
-
-            // 1. 更新 Header
-            document.getElementById('day-title').innerText = data.title;
-            document.getElementById('date-text').innerText = data.date;
-
-            // 2. 更新底部導航按鈕樣式 (切換active-day類別)
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active-day'));
-            document.getElementById(`btn-${dayNum}`).classList.add('active-day');
-
-            // 3. 生成時間軸卡片
-            const container = document.getElementById('timeline-content');
-            // 清空舊內容
-            container.innerHTML = ''; 
-
-            // 依序生成新卡片
-            data.events.forEach((ev, index) => {
-                const cardHtml = `
-                    <div class="relative mb-8 pl-12 animate-fade-in" style="animation-delay: ${index * 0.1}s">
-                        <div class="absolute left-[16px] top-1 w-6 h-6 bg-white border-4 border-fuji-blue rounded-full z-10 shadow-sm"></div>
-                        
-                        <div class="card bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-sky-50 card-border">
-                            <div class="flex justify-between items-center mb-1.5">
-                                <span class="text-sm font-bold text-fuji-dark">${ev.time}</span>
-                                <i class="fas fa-${ev.icon} text-gray-200 text-lg"></i>
-                            </div>
-                            <h3 class="text-lg font-extrabold text-gray-950 tracking-tight">${ev.title}</h3>
-                            <p class="text-sm text-gray-500 mt-1 leading-relaxed">${ev.desc}</p>
-                            
-                            ${ev.map ? `
-                                <a href="${ev.map}" target="_blank" class="inline-flex items-center mt-4 px-4 py-1.5 bg-sky-50 text-fuji-dark rounded-full text-xs font-bold transition active:bg-sky-100">
-                                    <i class="fas fa-map-marker-alt mr-1.5 text-fuji-blue"></i> 地圖導航 
-                                    <i class="fas fa-chevron-right ml-1.5 opacity-50"></i>
-                                </a>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', cardHtml);
-            });
+        // --- 分頁切換 ---
+        function switchTab(tab) {
+            const sections = ['itinerary-section', 'checklist-section', 'shopping-section'];
+            const navs = ['nav-itinerary', 'nav-checklist', 'nav-shopping'];
             
-            // 4. 平滑滾動回頂部
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            sections.forEach(s => document.getElementById(s).classList.add('hidden-section'));
+            navs.forEach(n => document.getElementById(n).classList.replace('active-day', 'text-gray-400'));
+            
+            document.getElementById(`${tab}-section`).classList.remove('hidden-section');
+            document.getElementById(`nav-${tab}`).classList.replace('text-gray-400', 'active-day');
+            
+            document.getElementById('date-nav').style.display = (tab === 'itinerary') ? 'flex' : 'none';
+
+            if(tab === 'itinerary') renderDay(1);
+            if(tab === 'checklist') { 
+                document.getElementById('main-title').innerText = "行前準備";
+                document.getElementById('sub-title').innerText = "細項檢查";
+                renderTodos(); 
+            }
+            if(tab === 'shopping') {
+                document.getElementById('main-title').innerText = "藥妝購物清單";
+                document.getElementById('sub-title').innerText = "買好買滿！";
+                renderShopItems();
+            }
         }
 
-        // --- 預設載入第一天 ---
-        // 為了確保DOM都載入，稍微延遲一下
-        window.onload = function() {
-            renderDay(1);
-        };
+        // --- 行程渲染 ---
+        function renderDay(dayNum) {
+            const data = itinerary[dayNum];
+            document.getElementById('main-title').innerText = data.title;
+            document.getElementById('sub-title').innerText = data.date;
+            document.querySelectorAll('#date-nav button').forEach(btn => btn.style.borderColor = "#e2dfd9");
+            document.getElementById(`btn-${dayNum}`).style.borderColor = "#bf9d96";
+
+            document.getElementById('timeline-content').innerHTML = data.events.map(ev => `
+                <div class="relative mb-8 pl-12 animate-fade-in">
+                    <div class="absolute left-[16px] top-1 w-6 h-6 bg-white border-4 border-morandi-rose rounded-full z-10"></div>
+                    <div class="card bg-white p-5 rounded-3xl shadow-sm border border-[#eee8df]">
+                        <div class="flex justify-between items-center mb-1"><span class="text-sm font-bold text-cocoa-brown/80">${ev.time}</span><i class="fas fa-${ev.icon} text-gray-200"></i></div>
+                        <h3 class="text-lg font-bold text-cocoa-brown">${ev.title}</h3>
+                        <p class="text-sm text-gray-500 mt-1">${ev.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- 功能: 準備清單 ---
+        let todos = JSON.parse(localStorage.getItem('travel_todos')) || [{ text: "護照", done: false }];
+        function renderTodos() {
+            document.getElementById('todo-list').innerHTML = todos.map((t, i) => `
+                <li class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100" onclick="toggleTodo(${i})">
+                    <div class="flex items-center gap-3"><i class="far ${t.done ? 'fa-check-circle text-morandi-rose' : 'fa-circle text-gray-300'}"></i><span class="text-sm ${t.done ? 'checked' : ''}">${t.text}</span></div>
+                    <button onclick="event.stopPropagation(); deleteTodo(${i})" class="text-gray-300 px-2"><i class="fas fa-times"></i></button>
+                </li>
+            `).join('');
+            localStorage.setItem('travel_todos', JSON.stringify(todos));
+        }
+        function addTodo() { 
+            const input = document.getElementById('todo-input'); 
+            if(input.value) { todos.push({text: input.value, done: false}); input.value=''; renderTodos(); } 
+        }
+        function toggleTodo(i) { todos[i].done = !todos[i].done; renderTodos(); }
+        function deleteTodo(i) { todos.splice(i, 1); renderTodos(); }
+
+        // --- 功能: 購物清單 ---
+        let shopItems = JSON.parse(localStorage.getItem('travel_shop')) || [{ name: "合利他命 EX", count: 2, img: "", done: false }];
+        function renderShopItems() {
+            document.getElementById('shop-list').innerHTML = shopItems.map((s, i) => `
+                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 ${s.done ? 'opacity-50' : ''}" onclick="toggleShop(${i})">
+                    ${s.img ? `<img src="${s.img}" class="w-16 h-16 rounded-lg object-cover bg-gray-200">` : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 text-xs">No Img</div>`}
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <i class="far ${s.done ? 'fa-check-square text-morandi-rose' : 'fa-square text-gray-300'}"></i>
+                            <h4 class="font-bold text-cocoa-brown ${s.done ? 'checked' : ''}">${s.name}</h4>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">數量：${s.count}</p>
+                    </div>
+                    <button onclick="event.stopPropagation(); deleteShop(${i})" class="text-gray-300"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+            localStorage.setItem('travel_shop', JSON.stringify(shopItems));
+        }
+        function addShopItem() {
+            const name = document.getElementById('shop-name').value;
+            const count = document.getElementById('shop-count').value || 1;
+            const img = document.getElementById('shop-img').value;
+            if(!name) return;
+            shopItems.push({ name, count, img, done: false });
+            document.getElementById('shop-name').value = '';
+            document.getElementById('shop-count').value = '';
+            document.getElementById('shop-img').value = '';
+            renderShopItems();
+        }
+        function toggleShop(i) { shopItems[i].done = !shopItems[i].done; renderShopItems(); }
+        function deleteShop(i) { shopItems.splice(i, 1); renderShopItems(); }
+
+        window.onload = () => renderDay(1);
     </script>
 </body>
 </html>
