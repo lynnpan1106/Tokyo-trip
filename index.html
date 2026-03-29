@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>東京河口湖 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
+    <style>
+        /* 針對手機優化的毛玻璃與粉色調 */
+        body { background-color: #fff5f7; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
+        .timeline-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background: #ffd1dc; z-index: 0; }
+        .active-day { background-color: #ec4899 !important; color: white !important; transform: scale(1.1); }
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .card { transition: all 0.2s; }
+        .card:active { transform: scale(0.98); opacity: 0.9; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md p-5 border-b border-pink-100 text-center">
+        <h1 id="day-title" class="text-xl font-bold text-pink-600">Day 1：啟程與新宿</h1>
+        <p id="day-date" class="text-xs text-gray-400 mt-1">2026/04/10 (五) | 東京 14°C 晴</p>
+    </header>
+
+    <main class="relative p-6 max-w-md mx-auto">
+        <div class="timeline-line"></div>
+        <div id="timeline-content">
+            </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-pink-100 px-4 py-4 flex justify-around items-center z-40 shadow-lg">
+        <button onclick="renderDay(1)" id="btn-1" class="w-10 h-10 rounded-full bg-pink-50 text-pink-400 font-bold text-sm flex items-center justify-center active-day">D1</button>
+        <button onclick="renderDay(2)" id="btn-2" class="w-10 h-10 rounded-full bg-pink-50 text-pink-400 font-bold text-sm flex items-center justify-center">D2</button>
+        <button onclick="renderDay(3)" id="btn-3" class="w-10 h-10 rounded-full bg-pink-50 text-pink-400 font-bold text-sm flex items-center justify-center">D3</button>
+        <button onclick="renderDay(4)" id="btn-4" class="w-10 h-10 rounded-full bg-pink-50 text-pink-400 font-bold text-sm flex items-center justify-center">D4</button>
+        <button onclick="renderDay(5)" id="btn-5" class="w-10 h-10 rounded-full bg-pink-50 text-pink-400 font-bold text-sm flex items-center justify-center">D5</button>
+    </nav>
+
+    <script>
+        // --- 這裡修改你的行程資料 ---
+        const itinerary = {
+            1: {
+                title: "Day 1：啟程與新宿探索",
+                date: "2026/04/10 (五)",
+                events: [
+                    { time: "08:30", icon: "plane", title: "星宇航空 JX800", desc: "桃園 ➔ 成田 (12:55抵達)", map: "" },
+                    { time: "14:00", icon: "train", title: "N'EX 前往新宿", desc: "B1 JR服務中心取票", map: "https://maps.app.goo.gl/xxx" },
+                    { time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "Tokyo Sky Dream Shinjuku", map: "https://maps.app.goo.gl/xxx" },
+                    { time: "19:00", icon: "utensils", title: "AFURI 阿夫利拉麵", desc: "必吃柚子鹽拉麵", map: "https://maps.app.goo.gl/xxx" }
+                ]
+            },
+            2: {
+                title: "Day 2：河口湖富士山之旅",
+                date: "2026/04/11 (六)",
+                events: [
+                    { time: "09:00", icon: "bus", title: "富士急行巴士", desc: "新宿 ➔ 河口湖", map: "" },
+                    { time: "12:00", icon: "camera", title: "下吉田站", desc: "新倉山淺間公園看富士山", map: "https://maps.app.goo.gl/xxx" }
+                ]
+            }
+            // Day 3, 4, 5 依此類推...
+        };
+
+        function renderDay(dayNum) {
+            const data = itinerary[dayNum];
+            if (!data) return alert("尚未建立此日行程");
+
+            // 更新標題與日期
+            document.getElementById('day-title').innerText = data.title;
+            document.getElementById('day-date').innerText = data.date;
+
+            // 更新按鈕樣式
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active-day'));
+            document.getElementById(`btn-${dayNum}`).classList.add('active-day');
+
+            // 生成時間軸內容
+            const container = document.getElementById('timeline-content');
+            container.innerHTML = data.events.map(ev => `
+                <div class="relative mb-8 pl-10 animate-fade-in">
+                    <div class="absolute left-[-5px] top-1 w-6 h-6 bg-white border-4 border-pink-400 rounded-full z-10"></div>
+                    <div class="card bg-white p-4 rounded-2xl shadow-sm border border-pink-50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-bold text-pink-400">${ev.time}</span>
+                            <i class="fas fa-${ev.icon} text-gray-200"></i>
+                        </div>
+                        <h3 class="text-md font-bold text-gray-800">${ev.title}</h3>
+                        <p class="text-sm text-gray-500 mt-1">${ev.desc}</p>
+                        ${ev.map ? `<a href="${ev.map}" target="_blank" class="inline-block mt-3 px-3 py-1 bg-pink-50 text-pink-600 rounded-full text-[10px] font-bold">導航 <i class="fas fa-chevron-right ml-1"></i></a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 預設載入第一天
+        renderDay(1);
+    </script>
+</body>
+</html>
