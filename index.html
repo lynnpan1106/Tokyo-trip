@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>東京旅遊 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
+    <script>
+        window.tailwind.config = {
+            theme: { extend: { colors: { 'morandi-rose': '#bf9d96', 'cocoa-brown': '#6f5643', 'oatmeal': '#f4f1ea' } } }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f1ea; font-family: -apple-system, sans-serif; color: #555; -webkit-tap-highlight-color: transparent; }
+        .active-day { background-color: #bf9d96 !important; color: white !important; }
+        .active-tab { border-bottom: 3px solid #bf9d96; color: #6f5643 !important; font-weight: 800; }
+        .glass-nav { background: rgba(244, 241, 234, 0.98); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding-bottom: env(safe-area-inset-bottom); }
+        .checked-text { text-decoration: line-through; opacity: 0.5; }
+        .hidden-section { display: none !important; }
+        .list-item { border-radius: 1rem; background: white; margin-bottom: 0.75rem; border: 1px solid #eee8df; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+    </style>
+</head>
+<body class="pb-44">
+
+    <header class="sticky top-0 z-30 bg-oatmeal p-5 border-b border-[#e2dfd9] text-center shadow-sm">
+        <h1 id="main-title" class="text-xl font-extrabold text-cocoa-brown tracking-widest">東京行程 2026</h1>
+        <div class="flex items-center justify-center gap-2 mt-1">
+            <p id="sub-title" class="text-xs text-gray-500 font-medium">4/10 (五)</p>
+            <span class="text-gray-300">|</span>
+            <div id="weather-box" class="flex items-center gap-1.5 text-xs text-slate-500 font-bold">
+                <i class="fas fa-sun text-slate-400"></i>
+                <span id="weather-temp">東京 14°C</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="itinerary-section" class="p-6 max-w-md mx-auto min-h-screen">
+        <div id="timeline-content"></div>
+    </main>
+
+    <main id="checklist-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#eee8df]">
+            <h2 class="text-lg font-bold text-cocoa-brown mb-4">行前準備</h2>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="todo-input" placeholder="新增清單..." class="flex-1 px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm">
+                <button onclick="addTodo()" class="bg-morandi-rose text-white px-4 py-2 rounded-lg text-sm font-bold">新增</button>
+            </div>
+            <div id="todo-list"></div>
+        </div>
+    </main>
+
+    <main id="shopping-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#eee8df]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-cocoa-brown">購物清單</h2>
+                <button onclick="clearBought()" class="text-[10px] text-morandi-rose border border-morandi-rose px-2 py-1 rounded-lg">清除已買</button>
+            </div>
+            <div class="space-y-2 mb-4 p-4 bg-gray-50 rounded-xl text-sm">
+                <input type="text" id="shop-name" placeholder="商品名稱" class="w-full px-3 py-2 rounded-lg border focus:outline-none mb-2">
+                <div class="flex gap-2 items-center">
+                    <input type="number" id="shop-count" placeholder="數量" class="w-16 px-3 py-2 rounded-lg border focus:outline-none">
+                    <button onclick="document.getElementById('shop-file').click()" class="flex-1 bg-white border border-gray-200 text-gray-400 py-2 rounded-lg text-xs">拍商品圖</button>
+                    <input type="file" id="shop-file" accept="image/*" class="hidden" onchange="previewImg()">
+                </div>
+                <div id="img-preview-box" class="hidden w-full h-24 rounded-lg overflow-hidden mt-2 border"><img id="img-preview" class="w-full h-full object-cover"></div>
+                <button onclick="addShop()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg font-bold">新增商品</button>
+            </div>
+            <div id="shop-list"></div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-[#e2dfd9] z-40">
+        <div id="date-nav" class="flex justify-around items-center px-4 pt-4 pb-2">
+            <button onclick="renderDay(1)" id="btn-1" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center">D1</button>
+            <button onclick="renderDay(2)" id="btn-2" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center">D2</button>
+            <button onclick="renderDay(3)" id="btn-3" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center">D3</button>
+            <button onclick="renderDay(4)" id="btn-4" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center">D4</button>
+            <button onclick="renderDay(5)" id="btn-5" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center">D5</button>
+        </div>
+        <div class="flex justify-around items-center py-2 px-2 border-t border-gray-200/50 mt-2">
+            <button onclick="switchTab('itinerary')" id="nav-itinerary" class="flex-1 py-2 text-[13px] font-bold">行程</button>
+            <button onclick="switchTab('checklist')" id="nav-checklist" class="flex-1 py-2 text-[13px] font-bold text-gray-400">行前準備</button>
+            <button onclick="switchTab('shopping')" id="nav-shopping" class="flex-1 py-2 text-[13px] font-bold text-gray-400">購物清單</button>
+        </div>
+    </nav>
+
+    <script>
+        // 資料設定 (包含 PDF 重點)
+        const itinerary = {
+            1: { title: "4/10 啟程新宿", date: "4/10 (五)", events: [
+                [span_2](start_span){ time: "08:30", title: "星宇 JX800", desc: "12:55 抵達成田第二航廈[span_2](end_span)" },
+                [span_3](start_span){ time: "13:44", title: "搭乘 N'EX", desc: "月台 5、6 號，B1 JR 取櫻花鑰匙圈[span_3](end_span)" },
+                [span_4](start_span){ time: "16:00", title: "飯店 Check-in", desc: "tokyo sky dream shinjuku[span_4](end_span)" },
+                [span_5](start_span){ time: "17:00", title: "花園神社", desc: "三丁目站 E2 出口[span_5](end_span)" }
+            ]},
+            2: { title: "4/11 河口湖探險", date: "4/11 (六)", events: [
+                [span_6](start_span){ time: "08:30", title: "富士回遊 08:30", desc: "新宿車站出發，掃 QR 取票[span_6](end_span)" },
+                [span_7](start_span){ time: "11:30", title: "河口湖午餐", desc: "不動茶屋、造型吐司[span_7](end_span)" },
+                [span_8](start_span){ time: "13:00", title: "TOYOTA 租車", desc: "河口湖車站步行 7 分鐘[span_8](end_span)" }
+            ]},
+            3: { title: "4/12 逆富士花海", date: "4/12 (日)", events: [
+                [span_9](start_span){ time: "06:00", title: "大橋逆富士", desc: "日出後 30 分鐘最佳點[span_9](end_span)" },
+                [span_10](start_span){ time: "10:00", title: "芝櫻祭", desc: "已預約門票 900円[span_10](end_span)" },
+                [span_11](start_span){ time: "13:00", title: "大石公園", desc: "白天花海版富士山[span_11](end_span)" }
+            ]},
+            4: { title: "4/13 天上山與池袋", date: "4/13 (一)", events: [
+                [span_12](start_span){ time: "09:30", title: "天上山纜車", desc: "大人 1,000円，兔子神社[span_12](end_span)" },
+                [span_13](start_span){ time: "16:08", title: "抵達池袋", desc: "池袋常磐 10 號大廈住宿[span_13](end_span)" },
+                [span_14](start_span){ time: "18:00", title: "池袋購物", desc: "太陽城、LUMINE[span_14](end_span)" }
+            ]},
+            5: { title: "4/14 淺草與返台", date: "4/14 (二)", events: [
+                [span_15](start_span){ time: "09:00", title: "淺草寺參拜", desc: "雷門、大黑招財金御守[span_15](end_span)" },
+                [span_16](start_span){ time: "10:30", title: "晴空塔敘敘苑", desc: "30F 絕景燒肉預約[span_16](end_span)" },
+                [span_17](start_span){ time: "16:20", title: "返台起飛", desc: "N'EX 新宿站發車[span_17](end_span)" }
+            ]}
+        };
+
+        let currentDay = 1;
+        let todos = JSON.parse(localStorage.getItem('t_todos')) || [];
+        let shopItems = JSON.parse(localStorage.getItem('t_shops')) || [];
+        let curImg = "";
+
+        // 功能定義 (掛載到 window 確保手機可用)
+        window.switchTab = function(tab) {
+            document.querySelectorAll('main').forEach(m => m.classList.add('hidden-section'));
+            document.querySelectorAll('nav .flex-1').forEach(n => n.classList.remove('active-tab', 'text-morandi-rose'));
+            document.querySelectorAll('nav .flex-1').forEach(n => n.classList.add('text-gray-400'));
+            document.getElementById(tab + '-section').classList.remove('hidden-section');
+            document.getElementById('nav-' + tab).classList.add('active-tab');
+            document.getElementById('nav-' + tab).classList.remove('text-gray-400');
+            document.getElementById('date-nav').style.display = (tab === 'itinerary' ? 'flex' : 'none');
+            if(tab === 'itinerary') renderDay(currentDay);
+            if(tab === 'checklist') renderTodos();
+            if(tab === 'shopping') renderShops();
+        }
+
+        window.renderDay = function(day) {
+            currentDay = day;
+            const data = itinerary[day];
+            document.getElementById('sub-title').innerText = data.date;
+            document.querySelectorAll('#date-nav button').forEach(b => b.classList.remove('active-day'));
+            document.getElementById('btn-' + day).classList.add('active-day');
+            document.getElementById('timeline-content').innerHTML = data.events.map(ev => `
+                <div class="relative mb-6 pl-10">
+                    <div class="absolute left-0 top-1 w-4 h-4 bg-morandi-rose rounded-full"></div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <span class="text-[10px] font-bold text-gray-400">${ev.time}</span>
+                        <h3 class="text-sm font-bold text-cocoa-brown">${ev.title}</h3>
+                        <p class="text-xs text-gray-500 mt-1">${ev.desc}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        window.renderTodos = function() {
+            document.getElementById('todo-list').innerHTML = todos.map((t,i) => `<div class="list-item" onclick="toggleTodo(${i})"><div class="w-5 h-5 rounded-full border ${t.done?'bg-morandi-rose text-white':''} flex items-center justify-center text-[8px]"><i class="fas fa-check"></i></div><span class="text-sm flex-1 ${t.done?'checked-text':''}">${t.text}</span><button onclick="event.stopPropagation();delTodo(${i})" class="text-gray-300 text-xs px-2">刪除</button></div>`).join('');
+            localStorage.setItem('t_todos', JSON.stringify(todos));
+        }
+
+        window.renderShops = function() {
+            document.getElementById('shop-list').innerHTML = shopItems.map((s,i) => `<div class="list-item" onclick="toggleShop(${i})"><div class="w-5 h-5 rounded-full border ${s.done?'bg-morandi-rose text-white':''} flex items-center justify-center text-[8px]"><i class="fas fa-check"></i></div>${s.img?`<img src="${s.img}" class="w-10 h-10 rounded">`:''}<span class="text-sm flex-1 ${s.done?'checked-text':''}">${s.name} (x${s.count})</span><button onclick="event.stopPropagation();delShop(${i})" class="text-gray-300 text-xs px-2">刪除</button></div>`).join('');
+            localStorage.setItem('t_shops', JSON.stringify(shopItems));
+        }
+
+        window.addTodo = function() { let v = document.getElementById('todo-input').value; if(v){ todos.push({text:v, done:false}); document.getElementById('todo-input').value=''; renderTodos(); } }
+        window.toggleTodo = function(i) { todos[i].done = !todos[i].done; renderTodos(); }
+        window.delTodo = function(i) { todos.splice(i,1); renderTodos(); }
+        window.addShop = function() { let n = document.getElementById('shop-name').value; let c = document.getElementById('shop-count').value || 1; if(n){ shopItems.push({name:n, count:c, img:curImg, done:false}); document.getElementById('shop-name').value=''; curImg=''; document.getElementById('img-preview-box').classList.add('hidden'); renderShops(); } }
+        window.toggleShop = function(i) { shopItems[i].done = !shopItems[i].done; renderShops(); }
+        window.delShop = function(i) { shopItems.splice(i,1); renderShops(); }
+        window.clearBought = function() { if(confirm("清除？")) { shopItems = shopItems.filter(s => !s.done); renderShops(); } }
+        window.previewImg = function() {
+            let f = document.getElementById('shop-file').files[0];
+            let r = new FileReader();
+            r.onload = e => {
+                let i = new Image(); i.src = e.target.result;
+                i.onload = () => {
+                    let cv = document.createElement('canvas');
+                    cv.width = 200; cv.height = i.height * (200/i.width);
+                    cv.getContext('2d').drawImage(i, 0, 0, cv.width, cv.height);
+                    curImg = cv.toDataURL('image/jpeg', 0.5);
+                    document.getElementById('img-preview').src = curImg;
+                    document.getElementById('img-preview-box').classList.remove('hidden');
+                };
+            };
+            if(f) r.readAsDataURL(f);
+        }
+
+        // --- 強制初始化 ---
+        switchTab('itinerary');
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6895&longitude=139.6917&current_weather=true')
+            .then(r => r.json()).then(d => { document.getElementById('weather-temp').innerText = "東京 " + Math.round(d.current_weather.temperature) + "°C"; });
+    </script>
+</body>
+</html>
