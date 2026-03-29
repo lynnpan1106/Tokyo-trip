@@ -14,32 +14,39 @@
                         'morandi-rose': '#bf9d96',
                         'cocoa-brown': '#6f5643',
                         'oatmeal': '#f4f1ea',
-                        'fog-blue': '#9bb7c1',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #f4f1ea; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; color: #555; }
-        .timeline-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: #cbd5e1; z-index: 0; }
+        body { background-color: #f4f1ea; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; color: #555; overflow-x: hidden; }
         .active-day { background-color: #bf9d96 !important; color: white !important; transform: scale(1.05); }
-        .glass-nav { background: rgba(244, 241, 234, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding-bottom: env(safe-area-inset-bottom); }
-        .card { transition: all 0.2s ease-out; }
-        .checked { text-decoration: line-through; opacity: 0.5; }
+        .active-tab { border-bottom: 3px solid #bf9d96; color: #6f5643 !important; font-weight: 800; }
+        .glass-nav { background: rgba(244, 241, 234, 0.98); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding-bottom: env(safe-area-inset-bottom); }
+        .checked-text { text-decoration: line-through; opacity: 0.5; }
         .hidden-section { display: none; }
-        input::placeholder { font-size: 0.8rem; opacity: 0.6; }
+        .swipe-item { position: relative; overflow: hidden; transition: transform 0.3s ease; border-radius: 1.25rem; background: #e5a9a9; }
+        .swipe-content { position: relative; z-index: 2; transition: transform 0.3s ease; background: white; cursor: pointer; }
+        .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; color: white; display: flex; align-items: center; justify-content: center; z-index: 1; font-size: 0.85rem; font-weight: bold; }
+        .swiped .swipe-content { transform: translateX(-80px); }
     </style>
 </head>
-<body class="pb-40">
+<body class="pb-48">
 
-    <header class="sticky top-0 z-30 bg-oatmeal/95 backdrop-blur-sm p-5 border-b border-[#e2dfd9] text-center">
-        <h1 id="main-title" class="text-xl font-extrabold text-cocoa-brown tracking-tight">Day 1：啟程與新宿</h1>
-        <p id="sub-title" class="text-xs text-gray-500 mt-2">2026/04/10 (五) | 東京 14°C 晴</p>
+    <header class="sticky top-0 z-30 bg-oatmeal/95 backdrop-blur-sm p-5 border-b border-[#e2dfd9] text-center shadow-sm">
+        <h1 id="main-title" class="text-xl font-extrabold text-cocoa-brown tracking-tight">載入中...</h1>
+        <div class="flex items-center justify-center gap-2 mt-2">
+            <p id="sub-title" class="text-xs text-gray-500 font-medium tracking-wide">2026/04/10 (五)</p>
+            <span class="text-gray-300">|</span>
+            <div id="weather-box" class="flex items-center gap-1.5 text-xs text-slate-500 font-bold">
+                <i id="weather-icon" class="fas fa-spinner fa-spin text-fog-blue"></i>
+                <span id="weather-temp">讀取中...</span>
+            </div>
+        </div>
     </header>
 
     <main id="itinerary-section" class="relative p-6 max-w-md mx-auto min-h-screen">
-        <div class="timeline-line"></div>
         <div id="timeline-content"></div>
     </main>
 
@@ -47,8 +54,8 @@
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#eee8df]">
             <h2 class="text-lg font-bold text-cocoa-brown mb-4"><i class="fas fa-passport mr-2"></i>行前準備</h2>
             <div class="flex gap-2 mb-6">
-                <input type="text" id="todo-input" placeholder="例：護照、日幣..." class="flex-1 px-4 py-2 rounded-xl border border-gray-100 bg-gray-50 text-sm">
-                <button onclick="addTodo()" class="bg-morandi-rose text-white px-4 py-2 rounded-xl text-sm font-bold">新增</button>
+                <input type="text" id="todo-input" placeholder="新增項目..." class="flex-1 px-4 py-2 rounded-xl border border-gray-100 bg-gray-50 text-sm focus:outline-none focus:border-morandi-rose">
+                <button onclick="addTodo()" class="bg-morandi-rose text-white px-5 py-2 rounded-xl text-sm font-bold active:scale-95 transition-transform">新增</button>
             </div>
             <ul id="todo-list" class="space-y-3"></ul>
         </div>
@@ -56,143 +63,123 @@
 
     <main id="shopping-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#eee8df]">
-            <h2 class="text-lg font-bold text-cocoa-brown mb-4"><i class="fas fa-shopping-bag mr-2"></i>購物清單</h2>
-            
-            <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                <input type="text" id="shop-name" placeholder="商品名稱" class="w-full px-3 py-2 rounded-lg border border-gray-100 text-sm mb-2">
+            <h2 class="text-lg font-bold text-cocoa-brown mb-4"><i class="fas fa-cart-plus mr-2"></i>購物清單</h2>
+            <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm text-gray-500">
+                <input type="text" id="shop-name" placeholder="商品名稱" class="w-full px-3 py-2 rounded-lg border border-gray-100 mb-2 focus:outline-none">
                 <div class="flex gap-2">
-                    <input type="number" id="shop-count" placeholder="數量" class="w-20 px-3 py-2 rounded-lg border border-gray-100 text-sm">
-                    <input type="text" id="shop-img" placeholder="圖片網址 (選填)" class="flex-1 px-3 py-2 rounded-lg border border-gray-100 text-sm">
+                    <input type="number" id="shop-count" placeholder="數量" class="w-20 px-3 py-2 rounded-lg border border-gray-100 focus:outline-none">
+                    <input type="text" id="shop-img" placeholder="圖片連結" class="flex-1 px-3 py-2 rounded-lg border border-gray-100 focus:outline-none">
                 </div>
-                <button onclick="addShopItem()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg text-sm font-bold">新增商品</button>
+                <button onclick="addShopItem()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg font-bold active:scale-95 transition-transform">新增商品</button>
             </div>
-
             <div id="shop-list" class="space-y-4"></div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-[#e2dfd9] px-2 py-3 z-40">
-        <div class="flex justify-around items-center mb-3 px-4">
-            <button onclick="switchTab('itinerary')" id="nav-itinerary" class="text-xs font-bold px-4 py-2 rounded-full active-day"><i class="fas fa-map mr-1"></i>行程</button>
-            <button onclick="switchTab('checklist')" id="nav-checklist" class="text-xs font-bold px-4 py-2 rounded-full text-gray-400"><i class="fas fa-check-square mr-1"></i>準備</button>
-            <button onclick="switchTab('shopping')" id="nav-shopping" class="text-xs font-bold px-4 py-2 rounded-full text-gray-400"><i class="fas fa-cart-plus mr-1"></i>購物</button>
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-[#e2dfd9] z-40 shadow-2xl">
+        <div id="date-nav" class="flex justify-around items-center px-4 pt-4 pb-2">
+            <button onclick="renderDay(1)" id="btn-1" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all active-day"><span>D1</span><span class="opacity-70">4/10</span></button>
+            <button onclick="renderDay(2)" id="btn-2" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all text-gray-400"><span>D2</span><span class="opacity-70">4/11</span></button>
+            <button onclick="renderDay(3)" id="btn-3" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all text-gray-400"><span>D3</span><span class="opacity-70">4/12</span></button>
+            <button onclick="renderDay(4)" id="btn-4" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all text-gray-400"><span>D4</span><span class="opacity-70">4/13</span></button>
+            <button onclick="renderDay(5)" id="btn-5" class="w-11 h-11 rounded-2xl bg-white text-[10px] font-black border border-gray-200 flex flex-col items-center justify-center transition-all text-gray-400"><span>D5</span><span class="opacity-70">4/14</span></button>
         </div>
-        <div id="date-nav" class="flex justify-around items-center border-t border-gray-100 pt-3">
-            <button onclick="renderDay(1)" id="btn-1" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/10</button>
-            <button onclick="renderDay(2)" id="btn-2" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/11</button>
-            <button onclick="renderDay(3)" id="btn-3" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/12</button>
-            <button onclick="renderDay(4)" id="btn-4" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/13</button>
-            <button onclick="renderDay(5)" id="btn-5" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">4/14</button>
+        <div class="flex justify-around items-center py-2 px-2 border-t border-gray-200/50 mt-2">
+            <button onclick="switchTab('itinerary')" id="nav-itinerary" class="flex-1 py-2 text-[13px] font-bold text-morandi-rose active-tab transition-all">行程</button>
+            <button onclick="switchTab('checklist')" id="nav-checklist" class="flex-1 py-2 text-[13px] font-bold text-gray-400 transition-all">行前準備</button>
+            <button onclick="switchTab('shopping')" id="nav-shopping" class="flex-1 py-2 text-[13px] font-bold text-gray-400 transition-all">購物清單</button>
         </div>
     </nav>
 
     <script>
-        // --- 行程資料 ---
-        const itinerary = {
-            1: { title: "Day 1：啟程與新宿", date: "2026/04/10 (五)", events: [{ time: "08:30", icon: "plane", title: "星宇 JX800", desc: "桃園 ➔ 成田" }, { time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "新宿地區" }] },
-            2: { title: "Day 2：河口湖探險", date: "2026/04/11 (六)", events: [{ time: "09:00", icon: "bus", title: "巴士前往河口湖", desc: "看富士山" }] },
-            3: { title: "Day 3：東京市區", date: "2026/04/12 (日)", events: [{ time: "10:00", icon: "shopping-bag", title: "澀谷/原宿", desc: "" }] },
-            4: { title: "Day 4：上野賞櫻", date: "2026/04/13 (一)", events: [{ time: "11:00", icon: "tree", title: "上野公園", desc: "" }] },
-            5: { title: "Day 5：返程採買", date: "2026/04/14 (二)", events: [{ time: "12:00", icon: "plane-departure", title: "前往機場", desc: "回溫暖的家" }] }
-        };
+        // --- 天氣 API 功能 ---
+        async function fetchWeather() {
+            try {
+                // 使用公共 API 獲取東京天氣 (此為範例 API 網址，正式使用建議申請 OpenWeatherMap 免費 Key)
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.6895&longitude=139.6917&current_weather=true');
+                const data = await res.json();
+                const temp = Math.round(data.current_weather.temperature);
+                const code = data.current_weather.weathercode;
+                
+                let icon = 'fa-sun';
+                if (code > 0) icon = 'fa-cloud-sun';
+                if (code > 40) icon = 'fa-cloud';
+                if (code > 60) icon = 'fa-cloud-showers-heavy';
 
-        // --- 分頁切換 ---
-        function switchTab(tab) {
-            const sections = ['itinerary-section', 'checklist-section', 'shopping-section'];
-            const navs = ['nav-itinerary', 'nav-checklist', 'nav-shopping'];
-            
-            sections.forEach(s => document.getElementById(s).classList.add('hidden-section'));
-            navs.forEach(n => document.getElementById(n).classList.replace('active-day', 'text-gray-400'));
-            
-            document.getElementById(`${tab}-section`).classList.remove('hidden-section');
-            document.getElementById(`nav-${tab}`).classList.replace('text-gray-400', 'active-day');
-            
-            document.getElementById('date-nav').style.display = (tab === 'itinerary') ? 'flex' : 'none';
-
-            if(tab === 'itinerary') renderDay(1);
-            if(tab === 'checklist') { 
-                document.getElementById('main-title').innerText = "行前準備";
-                document.getElementById('sub-title').innerText = "細項檢查";
-                renderTodos(); 
-            }
-            if(tab === 'shopping') {
-                document.getElementById('main-title').innerText = "藥妝購物清單";
-                document.getElementById('sub-title').innerText = "買好買滿！";
-                renderShopItems();
+                document.getElementById('weather-temp').innerText = `東京 ${temp}°C`;
+                document.getElementById('weather-icon').className = `fas ${icon} text-slate-400`;
+            } catch (e) {
+                document.getElementById('weather-temp').innerText = '東京 14°C';
+                document.getElementById('weather-icon').className = 'fas fa-sun text-slate-400';
             }
         }
 
-        // --- 行程渲染 ---
+        const itinerary = {
+            1: { title: "Day 1：啟程與新宿", date: "2026/04/10 (五)", events: [{ time: "08:30", icon: "plane", title: "星宇 JX800", desc: "桃園 ➔ 成田 (12:55抵達)" }, { time: "16:00", icon: "hotel", title: "飯店 Check-in", desc: "新宿 Sky Dream" }] },
+            2: { title: "Day 2：河口湖探險", date: "2026/04/11 (六)", events: [{ time: "09:00", icon: "bus", title: "富士急行巴士", desc: "新宿 ➔ 河口湖" }] },
+            3: { title: "Day 3：淺草與市區", date: "2026/04/12 (日)", events: [{ time: "10:00", icon: "torii-gate", title: "淺草寺參拜", desc: "雷門大燈籠" }] },
+            4: { title: "Day 4：上野賞櫻", date: "2026/04/13 (一)", events: [{ time: "11:00", icon: "tree", title: "上野公園", desc: "漫步櫻花林" }] },
+            5: { title: "Day 5：返台採買", date: "2026/04/14 (二)", events: [{ time: "12:00", icon: "shopping-bag", title: "新宿最後採買", desc: "前往機場" }] }
+        };
+
+        function switchTab(tab) {
+            const sections = ['itinerary-section', 'checklist-section', 'shopping-section'];
+            const navs = ['nav-itinerary', 'nav-checklist', 'nav-shopping'];
+            sections.forEach(s => document.getElementById(s).classList.add('hidden-section'));
+            navs.forEach(n => { document.getElementById(n).classList.remove('active-tab'); document.getElementById(n).classList.add('text-gray-400'); });
+            document.getElementById(`${tab}-section`).classList.remove('hidden-section');
+            document.getElementById(`nav-${tab}`).classList.add('active-tab');
+            document.getElementById(`nav-${tab}`).classList.remove('text-gray-400');
+            document.getElementById('date-nav').style.display = (tab === 'itinerary') ? 'flex' : 'none';
+            if(tab === 'itinerary') renderDay(1);
+            else if(tab === 'checklist') { document.getElementById('main-title').innerText = "行前準備"; renderTodos(); }
+            else if(tab === 'shopping') { document.getElementById('main-title').innerText = "購物清單"; renderShopItems(); }
+        }
+
         function renderDay(dayNum) {
             const data = itinerary[dayNum];
             document.getElementById('main-title').innerText = data.title;
             document.getElementById('sub-title').innerText = data.date;
-            document.querySelectorAll('#date-nav button').forEach(btn => btn.style.borderColor = "#e2dfd9");
-            document.getElementById(`btn-${dayNum}`).style.borderColor = "#bf9d96";
-
+            document.querySelectorAll('#date-nav button').forEach(btn => { btn.classList.remove('active-day'); btn.classList.add('text-gray-400'); });
+            const activeBtn = document.getElementById(`btn-${dayNum}`);
+            activeBtn.classList.add('active-day'); activeBtn.classList.remove('text-gray-400');
             document.getElementById('timeline-content').innerHTML = data.events.map(ev => `
-                <div class="relative mb-8 pl-12 animate-fade-in">
-                    <div class="absolute left-[16px] top-1 w-6 h-6 bg-white border-4 border-morandi-rose rounded-full z-10"></div>
-                    <div class="card bg-white p-5 rounded-3xl shadow-sm border border-[#eee8df]">
-                        <div class="flex justify-between items-center mb-1"><span class="text-sm font-bold text-cocoa-brown/80">${ev.time}</span><i class="fas fa-${ev.icon} text-gray-200"></i></div>
-                        <h3 class="text-lg font-bold text-cocoa-brown">${ev.title}</h3>
-                        <p class="text-sm text-gray-500 mt-1">${ev.desc}</p>
-                    </div>
-                </div>
+                <div class="relative mb-8 pl-12"><div class="absolute left-[16px] top-1 w-6 h-6 bg-white border-4 border-morandi-rose rounded-full z-10"></div><div class="bg-white p-5 rounded-3xl shadow-sm border border-[#eee8df]"><span class="text-xs font-bold text-cocoa-brown/80">${ev.time}</span><h3 class="text-lg font-bold text-cocoa-brown">${ev.title}</h3><p class="text-sm text-gray-500 mt-1">${ev.desc}</p></div></div>
             `).join('');
         }
 
-        // --- 功能: 準備清單 ---
+        // --- 滑動與點擊邏輯 ---
+        let startX = 0; let activeSwipeItem = null;
+        function attachListeners() {
+            document.querySelectorAll('.swipe-item').forEach(item => {
+                item.addEventListener('touchstart', e => { startX = e.touches[0].clientX; if (activeSwipeItem && activeSwipeItem !== item) activeSwipeItem.classList.remove('swiped'); });
+                item.addEventListener('touchend', e => { let endX = e.changedTouches[0].clientX; if (startX - endX > 50) { item.classList.add('swiped'); activeSwipeItem = item; } else if (endX - startX > 50) { item.classList.remove('swiped'); } });
+            });
+        }
+
         let todos = JSON.parse(localStorage.getItem('travel_todos')) || [{ text: "護照", done: false }];
         function renderTodos() {
-            document.getElementById('todo-list').innerHTML = todos.map((t, i) => `
-                <li class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100" onclick="toggleTodo(${i})">
-                    <div class="flex items-center gap-3"><i class="far ${t.done ? 'fa-check-circle text-morandi-rose' : 'fa-circle text-gray-300'}"></i><span class="text-sm ${t.done ? 'checked' : ''}">${t.text}</span></div>
-                    <button onclick="event.stopPropagation(); deleteTodo(${i})" class="text-gray-300 px-2"><i class="fas fa-times"></i></button>
-                </li>
-            `).join('');
-            localStorage.setItem('travel_todos', JSON.stringify(todos));
+            document.getElementById('todo-list').innerHTML = todos.map((t, i) => `<li class="swipe-item mb-3"><div class="swipe-delete-btn" onclick="deleteTodo(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleTodo(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${t.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200 text-transparent'}"><i class="fas fa-check text-[10px]"></i></div><span class="text-sm font-medium ${t.done ? 'checked-text' : ''}">${t.text}</span></div></li>`).join('');
+            attachListeners(); localStorage.setItem('travel_todos', JSON.stringify(todos));
         }
-        function addTodo() { 
-            const input = document.getElementById('todo-input'); 
-            if(input.value) { todos.push({text: input.value, done: false}); input.value=''; renderTodos(); } 
-        }
+        function addTodo() { const input = document.getElementById('todo-input'); if(input.value) { todos.push({text: input.value, done: false}); input.value=''; renderTodos(); } }
         function toggleTodo(i) { todos[i].done = !todos[i].done; renderTodos(); }
         function deleteTodo(i) { todos.splice(i, 1); renderTodos(); }
 
-        // --- 功能: 購物清單 ---
-        let shopItems = JSON.parse(localStorage.getItem('travel_shop')) || [{ name: "合利他命 EX", count: 2, img: "", done: false }];
+        let shopItems = JSON.parse(localStorage.getItem('travel_shop')) || [];
         function renderShopItems() {
-            document.getElementById('shop-list').innerHTML = shopItems.map((s, i) => `
-                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 ${s.done ? 'opacity-50' : ''}" onclick="toggleShop(${i})">
-                    ${s.img ? `<img src="${s.img}" class="w-16 h-16 rounded-lg object-cover bg-gray-200">` : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 text-xs">No Img</div>`}
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                            <i class="far ${s.done ? 'fa-check-square text-morandi-rose' : 'fa-square text-gray-300'}"></i>
-                            <h4 class="font-bold text-cocoa-brown ${s.done ? 'checked' : ''}">${s.name}</h4>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-1">數量：${s.count}</p>
-                    </div>
-                    <button onclick="event.stopPropagation(); deleteShop(${i})" class="text-gray-300"><i class="fas fa-trash"></i></button>
-                </div>
-            `).join('');
-            localStorage.setItem('travel_shop', JSON.stringify(shopItems));
+            document.getElementById('shop-list').innerHTML = shopItems.map((s, i) => `<div class="swipe-item mb-4"><div class="swipe-delete-btn" onclick="deleteShop(${i})">刪除</div><div class="swipe-content flex items-center gap-4 p-4" onclick="toggleShop(${i})"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${s.done ? 'bg-morandi-rose border-morandi-rose text-white' : 'border-gray-200 text-transparent'}"><i class="fas fa-check text-[10px]"></i></div>${s.img ? `<img src="${s.img}" class="w-14 h-14 rounded-xl object-cover">` : `<div class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center text-[10px] text-gray-400">無圖</div>`}<div class="flex-1"><h4 class="font-bold text-sm ${s.done ? 'checked-text' : ''}">${s.name}</h4><p class="text-[10px] text-gray-400">數量：${s.count}</p></div></div></div>`).join('');
+            attachListeners(); localStorage.setItem('travel_shop', JSON.stringify(shopItems));
         }
         function addShopItem() {
-            const name = document.getElementById('shop-name').value;
-            const count = document.getElementById('shop-count').value || 1;
-            const img = document.getElementById('shop-img').value;
-            if(!name) return;
-            shopItems.push({ name, count, img, done: false });
-            document.getElementById('shop-name').value = '';
-            document.getElementById('shop-count').value = '';
-            document.getElementById('shop-img').value = '';
-            renderShopItems();
+            const name = document.getElementById('shop-name').value; const count = document.getElementById('shop-count').value || 1; const img = document.getElementById('shop-img').value;
+            if(!name) return; shopItems.push({ name, count, img, done: false });
+            document.getElementById('shop-name').value = ''; document.getElementById('shop-count').value = ''; document.getElementById('shop-img').value = ''; renderShopItems();
         }
         function toggleShop(i) { shopItems[i].done = !shopItems[i].done; renderShopItems(); }
         function deleteShop(i) { shopItems.splice(i, 1); renderShopItems(); }
 
-        window.onload = () => renderDay(1);
+        window.onload = () => { renderDay(1); fetchWeather(); };
     </script>
 </body>
 </html>
