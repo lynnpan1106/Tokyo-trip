@@ -3,150 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>東京 2026</title>
+    <title>東京旅遊 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
+    <script>
+        window.tailwind.config = {
+            theme: { extend: { colors: { 'morandi-rose': '#bf9d96', 'cocoa-brown': '#6f5643', 'oatmeal': '#f4f1ea' } } }
+        }
+    </script>
     <style>
         body { background-color: #f4f1ea; font-family: -apple-system, sans-serif; color: #555; -webkit-tap-highlight-color: transparent; }
-        .active-day { background-color: #bf9d96 !important; color: white !important; transform: scale(1.05); }
+        .active-day { background-color: #bf9d96 !important; color: white !important; }
         .active-tab { border-bottom: 3px solid #bf9d96; color: #6f5643 !important; font-weight: 800; }
+        .glass-nav { background: rgba(244, 241, 234, 0.98); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding-bottom: env(safe-area-inset-bottom); }
         .hidden-section { display: none !important; }
         .card { background: white; border-radius: 1.25rem; border: 1px solid #eee8df; padding: 1.25rem; margin-bottom: 1rem; }
+        .checked-text { text-decoration: line-through; opacity: 0.5; }
+        .list-item { background: white; border-radius: 1rem; border: 1px solid #eee8df; padding: 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
     </style>
 </head>
 <body class="pb-44">
 
-    <header class="sticky top-0 z-30 bg-oatmeal p-5 border-b border-[#e2dfd9] text-center">
+    <header class="sticky top-0 z-30 bg-oatmeal p-5 border-b border-[#e2dfd9] text-center shadow-sm">
         <h1 class="text-xl font-extrabold text-cocoa-brown tracking-widest">東京行程 2026</h1>
-        <p id="header-date" class="text-xs text-gray-500 mt-1 font-medium">4/10 (五) | 東京 14°C</p>
+        <p id="header-info" class="text-xs text-gray-500 mt-1 font-medium">4/10 (五)</p>
     </header>
 
-    <main id="itinerary-section" class="p-6 max-w-md mx-auto min-h-screen">
+    <main id="itinerary-section" class="p-6 max-w-md mx-auto">
         <div id="day-1" class="day-content">
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>08:30</span><i class="fas fa-plane"></i></div>
-                <h3 class="font-bold text-cocoa-brown">星宇航空 JX800</h3>
-                [span_7](start_span)<p class="text-xs text-gray-500 mt-1">12:55 抵達成田第二航廈[span_7](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>13:44</span><i class="fas fa-train"></i></div>
-                <h3 class="font-bold text-cocoa-brown">搭乘 N'EX 至新宿</h3>
-                [span_8](start_span)<p class="text-xs text-gray-500 mt-1">B1 JR服務中心拿櫻花鑰匙圈，新宿站月台 5、6 號[span_8](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>16:00</span><i class="fas fa-hotel"></i></div>
-                <h3 class="font-bold text-cocoa-brown">住宿 Check-in</h3>
-                [span_9](start_span)<p class="text-xs text-gray-500 mt-1">Tokyo Sky Dream Shinjuku[span_9](end_span)</p>
-            </div>
+            [span_0](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">08:30</span><h3 class="font-bold text-cocoa-brown">星宇航空 JX800</h3><p class="text-xs text-gray-500">12:55 抵達成田第二航廈[span_0](end_span)</p></div>
+            [span_1](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">13:44</span><h3 class="font-bold text-cocoa-brown">搭乘 N'EX</h3><p class="text-xs text-gray-500">月台 5、6 號，B1 取櫻花鑰匙圈[span_1](end_span)</p></div>
+            [span_2](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">16:00</span><h3 class="font-bold text-cocoa-brown">飯店 Check-in</h3><p class="text-xs text-gray-500">Tokyo Sky Dream Shinjuku[span_2](end_span)</p></div>
         </div>
-
         <div id="day-2" class="day-content hidden-section">
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>08:30</span><i class="fas fa-train"></i></div>
-                <h3 class="font-bold text-cocoa-brown">富士回遊 08:30</h3>
-                [span_10](start_span)<p class="text-xs text-gray-500 mt-1">新宿直達富士山站，掃 QR 碼領票[span_10](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>13:00</span><i class="fas fa-car"></i></div>
-                <h3 class="font-bold text-cocoa-brown">河口湖租車</h3>
-                [span_11](start_span)<p class="text-xs text-gray-500 mt-1">TOYOTA 租車公司，步行 7 分鐘[span_11](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>14:30</span><i class="fas fa-camera"></i></div>
-                <h3 class="font-bold text-cocoa-brown">忍野八海</h3>
-                [span_12](start_span)<p class="text-xs text-gray-500 mt-1">傳統村落 + 富士山，停留約 60 分鐘[span_12](end_span)</p>
-            </div>
+            [span_3](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">08:30</span><h3 class="font-bold text-cocoa-brown">富士回遊直達</h3><p class="text-xs text-gray-500">新宿出發，掃 QR 碼取票[span_3](end_span)</p></div>
+            [span_4](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">13:00</span><h3 class="font-bold text-cocoa-brown">河口湖租車</h3><p class="text-xs text-gray-500">TOYOTA 租車公司[span_4](end_span)</p></div>
         </div>
-
         <div id="day-3" class="day-content hidden-section">
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>06:00</span><i class="fas fa-camera"></i></div>
-                <h3 class="font-bold text-cocoa-brown">河口湖大橋逆富士</h3>
-                [span_13](start_span)<p class="text-xs text-gray-500 mt-1">日出後 30 分鐘最佳點，停留 50 分鐘[span_13](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>07:00</span><i class="fas fa-mountain"></i></div>
-                <h3 class="font-bold text-cocoa-brown">新倉富士浅間神社</h3>
-                [span_14](start_span)<p class="text-xs text-gray-500 mt-1">五重塔絕景，爬 398 階樓梯[span_14](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>10:00</span><i class="fas fa-tree"></i></div>
-                <h3 class="font-bold text-cocoa-brown">富士芝櫻祭</h3>
-                [span_15](start_span)<p class="text-xs text-gray-500 mt-1">已預約門票 900円，停留 120 分鐘[span_15](end_span)</p>
-            </div>
+            [span_5](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">06:00</span><h3 class="font-bold text-cocoa-brown">逆富士攝影</h3><p class="text-xs text-gray-500">河口湖大橋，日出後 30 分鐘最佳[span_5](end_span)</p></div>
+            [span_6](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">10:00</span><h3 class="font-bold text-cocoa-brown">富士芝櫻祭</h3><p class="text-xs text-gray-500">門票 900円 (已預約)[span_6](end_span)</p></div>
         </div>
-
         <div id="day-4" class="day-content hidden-section">
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>09:30</span><i class="fas fa-mountain"></i></div>
-                <h3 class="font-bold text-cocoa-brown">天上山公園纜車</h3>
-                [span_16](start_span)<p class="text-xs text-gray-500 mt-1">來回 1,000日圓，兔子神社[span_16](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>16:08</span><i class="fas fa-train"></i></div>
-                <h3 class="font-bold text-cocoa-brown">抵達池袋</h3>
-                [span_17](start_span)<p class="text-xs text-gray-500 mt-1">池袋常磐 10 號大廈，池袋站西口 6 分鐘[span_17](end_span)</p>
-            </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>18:00</span><i class="fas fa-shopping-bag"></i></div>
-                <h3 class="font-bold text-cocoa-brown">池袋購物</h3>
-                [span_18](start_span)<p class="text-xs text-gray-500 mt-1">太陽城、扭蛋百貨總店[span_18](end_span)</p>
-            </div>
+            [span_7](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">09:30</span><h3 class="font-bold text-cocoa-brown">天上山公園纜車</h3><p class="text-xs text-gray-500">兔子神社，俯瞰全景[span_7](end_span)</p></div>
+            [span_8](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">18:00</span><h3 class="font-bold text-cocoa-brown">池袋購物</h3><p class="text-xs text-gray-500">太陽城、唐吉訶德[span_8](end_span)</p></div>
         </div>
-
         <div id="day-5" class="day-content hidden-section">
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>09:00</span><i class="fas fa-torii-gate"></i></div>
-                <h3 class="font-bold text-cocoa-brown">淺草寺參拜</h3>
-                [span_19](start_span)<p class="text-xs text-gray-500 mt-1">雷門、仲見世商店街、今戶神社[span_19](end_span)</p>
+            [span_9](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">09:00</span><h3 class="font-bold text-cocoa-brown">淺草寺參拜</h3><p class="text-xs text-gray-500">雷門、仲見世商店街[span_9](end_span)</p></div>
+            [span_10](start_span)<div class="card"><span class="text-xs font-bold text-morandi-rose">10:30</span><h3 class="font-bold text-cocoa-brown">晴空塔敘敘苑</h3><p class="text-xs text-gray-500">30F 絕景燒肉[span_10](end_span)</p></div>
+        </div>
+    </main>
+
+    <main id="checklist-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#eee8df]">
+            <h2 class="text-lg font-bold text-cocoa-brown mb-4">行前準備</h2>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="todo-input" placeholder="新增項目..." class="flex-1 px-3 py-2 rounded-lg border bg-gray-50 text-sm focus:outline-none">
+                <button onclick="addTodo()" class="bg-morandi-rose text-white px-4 py-2 rounded-lg text-sm font-bold">新增</button>
             </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>10:30</span><i class="fas fa-utensils"></i></div>
-                <h3 class="font-bold text-cocoa-brown">晴空塔敘敘苑</h3>
-                [span_20](start_span)<p class="text-xs text-gray-500 mt-1">30F 絕景燒肉，預約者請提早 5 分鐘到[span_20](end_span)</p>
+            <div id="todo-list"></div>
+        </div>
+    </main>
+
+    <main id="shopping-section" class="hidden-section p-6 max-w-md mx-auto min-h-screen">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#eee8df]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-cocoa-brown">購物清單</h2>
+                <button onclick="clearBought()" class="text-[10px] text-morandi-rose border border-morandi-rose px-2 py-1 rounded-lg">清除已買</button>
             </div>
-            <div class="card">
-                <div class="flex justify-between text-xs font-bold text-morandi-rose mb-1"><span>12:08</span><i class="fas fa-plane-departure"></i></div>
-                <h3 class="font-bold text-cocoa-brown">返台航班</h3>
-                [span_21](start_span)<p class="text-xs text-gray-500 mt-1">N'EX 12:08-13:23 前往機場[span_21](end_span)</p>
+            <div class="space-y-2 mb-4 p-4 bg-gray-50 rounded-xl text-sm">
+                <input type="text" id="shop-name" placeholder="商品名稱" class="w-full px-3 py-2 rounded-lg border mb-2">
+                <div class="flex gap-2">
+                    <input type="number" id="shop-count" placeholder="數量" class="w-16 px-3 py-2 rounded-lg border">
+                    <button onclick="document.getElementById('shop-file').click()" class="flex-1 bg-white border text-gray-400 py-2 rounded-lg text-xs">拍商品圖</button>
+                    <input type="file" id="shop-file" accept="image/*" class="hidden" onchange="previewImg()">
+                </div>
+                <div id="img-preview-box" class="hidden w-full h-24 rounded-lg overflow-hidden mt-2"><img id="img-preview" class="w-full h-full object-cover"></div>
+                <button onclick="addShop()" class="w-full mt-2 bg-cocoa-brown text-white py-2 rounded-lg font-bold">新增商品</button>
             </div>
+            <div id="shop-list"></div>
         </div>
     </main>
 
     <nav class="fixed bottom-0 left-0 right-0 glass-nav border-t border-[#e2dfd9] z-40">
         <div id="date-nav" class="flex justify-around items-center px-4 pt-4 pb-2">
-            <button onclick="changeDay(1)" id="btn-1" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200 active-day">D1</button>
-            <button onclick="changeDay(2)" id="btn-2" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200">D2</button>
-            <button onclick="changeDay(3)" id="btn-3" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200">D3</button>
-            <button onclick="changeDay(4)" id="btn-4" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200">D4</button>
-            <button onclick="changeDay(5)" id="btn-5" class="w-10 h-10 rounded-xl bg-white text-[10px] font-black border border-gray-200">D5</button>
+            <button onclick="showDay(1)" id="btn-1" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200 active-day">D1</button>
+            <button onclick="showDay(2)" id="btn-2" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">D2</button>
+            <button onclick="showDay(3)" id="btn-3" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">D3</button>
+            <button onclick="showDay(4)" id="btn-4" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">D4</button>
+            <button onclick="showDay(5)" id="btn-5" class="w-10 h-10 rounded-xl bg-white text-[10px] font-bold border border-gray-200">D5</button>
         </div>
-        <div class="flex justify-around items-center py-2 border-t border-gray-100 mt-2">
-            <button class="flex-1 py-2 text-[13px] font-bold text-morandi-rose active-tab">行程</button>
-            <button class="flex-1 py-2 text-[13px] font-bold text-gray-300">準備</button>
-            <button class="flex-1 py-2 text-[13px] font-bold text-gray-300">購物</button>
+        <div class="flex justify-around py-2 border-t border-gray-200/50 mt-2">
+            <button onclick="tab('itinerary')" id="nav-itinerary" class="flex-1 py-2 text-[13px] font-bold text-morandi-rose active-tab">行程</button>
+            <button onclick="tab('checklist')" id="nav-checklist" class="flex-1 py-2 text-[13px] font-bold text-gray-300">準備</button>
+            <button onclick="tab('shopping')" id="nav-shopping" class="flex-1 py-2 text-[13px] font-bold text-gray-300">購物</button>
         </div>
     </nav>
 
     <script>
-        // 這是最簡單的顯隱邏輯，不依賴任何外部資料載入
-        function changeDay(day) {
-            // 1. 隱藏所有內容
-            const contents = document.getElementsByClassName('day-content');
-            for(let i=0; i<contents.length; i++) {
-                contents[i].classList.add('hidden-section');
-            }
-            // 2. 顯示點選的那天
-            document.getElementById('day-' + day).classList.remove('hidden-section');
-            
-            // 3. 更新按鈕狀態
-            const btns = document.querySelectorAll('#date-nav button');
-            btns.forEach(b => b.classList.remove('active-day'));
-            document.getElementById('btn-' + day).classList.add('active-day');
-            
-            // 4. 更新日期顯示
+        let curDay = 1;
+        let todos = JSON.parse(localStorage.getItem('t_todos')) || [{text:'護照',done:false}];
+        let shops = JSON.parse(localStorage.getItem('t_shops')) || [];
+        let curImg = "";
+
+        window.showDay = function(d) {
+            curDay = d;
+            document.querySelectorAll('.day-content').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById('day-' + d).classList.remove('hidden-section');
+            document.querySelectorAll('#date-nav button').forEach(b => b.classList.remove('active-day'));
+            document.getElementById('btn-' + d).classList.add('active-day');
             const dates = ["4/10 (五)", "4/11 (六)", "4/12 (日)", "4/13 (一)", "4/14 (二)"];
-            document.getElementById('header-date').innerText = dates[day-1] + " | 東京 14°C";
+            document.getElementById('header-info').innerText = dates[d-1];
+        }
+
+        window.tab = function(t) {
+            document.getElementById('itinerary-section').classList.add('hidden-section');
+            document.getElementById('checklist-section').classList.add('hidden-section');
+            document.getElementById('shopping-section').classList.add('hidden-section');
+            document.getElementById('nav-itinerary').className = "flex-1 py-2 text-[13px] font-bold text-gray-300";
+            document.getElementById('nav-checklist').className = "flex-1 py-2 text-[13px] font-bold text-gray-300";
+            document.getElementById('nav-shopping').className = "flex-1 py-2 text-[13px] font-bold text-gray-300";
+            
+            document.getElementById(t + '-section').classList.remove('hidden-section');
+            document.getElementById('nav-' + t).className = "flex-1 py-2 text-[13px] font-bold text-morandi-rose active-tab";
+            document.getElementById('date-nav').style.display = (t === 'itinerary' ? 'flex' : 'none');
+            if(t === 'checklist') renderTodos();
+            if(t === 'shopping') renderShops();
+        }
+
+        window.renderTodos = function() {
+            document.getElementById('todo-list').innerHTML = todos.map((t,i) => `<div class="list-item" onclick="toggleTodo(${i})"><div class="w-5 h-5 rounded-full border ${t.done?'bg-morandi-rose border-morandi-rose text-white':''} flex items-center justify-center text-[10px]"><i class="fas fa-check"></i></div><span class="flex-1 ${t.done?'checked-text':''}">${t.text}</span><button onclick="event.stopPropagation();delTodo(${i})" class="text-gray-300 px-2">刪除</button></div>`).join('');
+            localStorage.setItem('t_todos', JSON.stringify(todos));
+        }
+        window.addTodo = function() { let v = document.getElementById('todo-input').value; if(v){ todos.push({text:v,done:false}); document.getElementById('todo-input').value=''; renderTodos(); } }
+        window.toggleTodo = function(i) { todos[i].done = !todos[i].done; renderTodos(); }
+        window.delTodo = function(i) { todos.splice(i,1); renderTodos(); }
+
+        window.renderShops = function() {
+            document.getElementById('shop-list').innerHTML = shops.map((s,i) => `<div class="list-item" onclick="toggleShop(${i})"><div class="w-5 h-5 rounded-full border ${s.done?'bg-morandi-rose border-morandi-rose text-white':''} flex items-center justify-center text-[10px]"><i class="fas fa-check"></i></div>${s.img?`<img src="${s.img}" class="w-10 h-10 rounded">`:''}<span class="flex-1 ${s.done?'checked-text':''}">${s.name} (x${s.count})</span><button onclick="event.stopPropagation();delShop(${i})" class="text-gray-300 px-2">刪除</button></div>`).join('');
+            localStorage.setItem('t_shops', JSON.stringify(shops));
+        }
+        window.addShop = function() { let n = document.getElementById('shop-name').value; let c = document.getElementById('shop-count').value || 1; if(n){ shops.push({name:n,count:c,img:curImg,done:false}); document.getElementById('shop-name').value=''; curImg=''; document.getElementById('img-preview-box').classList.add('hidden'); renderShops(); } }
+        window.toggleShop = function(i) { shops[i].done = !shops[i].done; renderShops(); }
+        window.delShop = function(i) { shops.splice(i,1); renderShops(); }
+        window.clearBought = function() { if(confirm("清除？")){ shops = shops.filter(s => !s.done); renderShops(); } }
+        window.previewImg = function() {
+            let f = document.getElementById('shop-file').files[0];
+            let r = new FileReader();
+            r.onload = e => {
+                let img = new Image(); img.src = e.target.result;
+                img.onload = () => {
+                    let cv = document.createElement('canvas');
+                    cv.width = 200; cv.height = img.height * (200/img.width);
+                    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+                    curImg = cv.toDataURL('image/jpeg', 0.5);
+                    document.getElementById('img-preview').src = curImg;
+                    document.getElementById('img-preview-box').classList.remove('hidden');
+                }
+            }
+            if(f) r.readAsDataURL(f);
         }
     </script>
 </body>
